@@ -1,37 +1,7 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from '@/components/theme-provider';
-import { AuthProvider } from '@/components/auth/auth-provider';
+import {redirect} from 'next/navigation';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
-
-export const metadata: Metadata = {
-  title: 'KrishiConnect',
-  description: 'AI-Powered Crop Health Analysis',
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-          <Toaster />
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+// This is the root layout, which redirects to the default locale.
+// The actual app layout is in src/app/[locale]/layout.tsx.
+export default function RootLayout() {
+  redirect('/en');
 }

@@ -1,0 +1,46 @@
+{
+  "LoginPage": {
+    "title": "KrishiConnect",
+    "description": "Enter your credentials to access your dashboard"
+  },
+  "DashboardPage": {
+    "totalRevenue": "Total Revenue",
+    "revenueInsight": "+20.1% from last month",
+    "cropHealth": "Crop Health",
+    "healthInsight": "-1.2% from yesterday",
+    "soilMoisture": "Soil Moisture",
+    "moistureInsight": "Optimal level",
+    "activeAlerts": "Active Alerts",
+    "alertsInsight": "1 new pest alert",
+    "yieldAnalyticsTitle": "Yield Analytics",
+    "yieldAnalyticsDescription": "Showing yield for the last 6 months.",
+    "weatherTitle": "Weather",
+    "quickActionsTitle": "Quick Actions",
+    "marketPricesTitle": "Market Prices (Wheat)",
+    "marketPricesDescription": "Latest prices from major markets."
+  },
+  "Sidebar": {
+    "Dashboard": "Dashboard",
+    "Analytics": "Analytics",
+    "Diagnostics": "Diagnostics",
+    "SoilAnalysis": "Soil Analysis",
+    "PestPrediction": "Pest Prediction",
+    "HealthMap": "Health Map",
+    "Market": "Market",
+    "CropAdvisor": "Crop Advisor",
+    "Irrigation": "Irrigation",
+    "WeedID": "Weed ID",
+    "Assistant": "Assistant",
+    "AboutUs": "About Us",
+    "Support": "Support",
+    "Settings": "Settings",
+    "LogOut": "Log Out"
+  },
+  "Header": {
+    "searchPlaceholder": "Search...",
+    "myAccount": "My Account",
+    "settings": "Settings",
+    "support": "Support",
+    "logout": "Logout"
+  }
+}

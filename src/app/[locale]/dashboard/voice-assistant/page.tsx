@@ -20,8 +20,11 @@ interface Message {
 }
 
 // SpeechRecognition type for browsers that support it
-const SpeechRecognition =
+let SpeechRecognition: any = null;
+if (typeof window !== 'undefined') {
+  SpeechRecognition =
   (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+}
 let recognition: any = null;
 if (SpeechRecognition) {
   recognition = new SpeechRecognition();

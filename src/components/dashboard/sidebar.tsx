@@ -28,31 +28,43 @@ import {
   LifeBuoy,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-const menuItems = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/dashboard/analysis", icon: Tractor, label: "Analytics" },
-  { href: "/dashboard/diagnostics", icon: Sprout, label: "Diagnostics" },
-  { href: "/dashboard/soil-analysis", icon: FlaskConical, label: "Soil Analysis" },
-  { href: "/dashboard/pest-prediction", icon: Bug, label: "Pest Prediction" },
-  { href: "/dashboard/health-map", icon: Map, label: "Health Map" },
-  { href: "/dashboard/market", icon: Landmark, label: "Market" },
-  { href: "/dashboard/crop-advisor", icon: Lightbulb, label: "Crop Advisor" },
-  { href: "/dashboard/irrigation-schedule", icon: Droplets, label: "Irrigation" },
-  { href: "/dashboard/weed-identification", icon: Flower, label: "Weed ID" },
-  { href: "/dashboard/voice-assistant", icon: Bot, label: "Assistant" },
-];
-
-const bottomMenuItems = [
-    { href: "/dashboard/about", icon: Info, label: "About Us" },
-    { href: "/dashboard/support", icon: LifeBuoy, label: "Support" },
-    { href: "/dashboard/settings", icon: Settings, label: "Settings" },
-    { href: "/", icon: LogOut, label: "Log Out" },
-]
+import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const t = useTranslations("Sidebar");
+
+  const menuItems = [
+    { href: "/dashboard", icon: LayoutDashboard, label: t("Dashboard") },
+    { href: "/dashboard/analysis", icon: Tractor, label: t("Analytics") },
+    { href: "/dashboard/diagnostics", icon: Sprout, label: t("Diagnostics") },
+    { href: "/dashboard/soil-analysis", icon: FlaskConical, label: t("SoilAnalysis") },
+    { href: "/dashboard/pest-prediction", icon: Bug, label: t("PestPrediction") },
+    { href: "/dashboard/health-map", icon: Map, label: t("HealthMap") },
+    { href: "/dashboard/market", icon: Landmark, label: t("Market") },
+    { href: "/dashboard/crop-advisor", icon: Lightbulb, label: t("CropAdvisor") },
+    { href: "/dashboard/irrigation-schedule", icon: Droplets, label: t("Irrigation") },
+    { href: "/dashboard/weed-identification", icon: Flower, label: t("WeedID") },
+    { href: "/dashboard/voice-assistant", icon: Bot, label: t("Assistant") },
+  ];
+  
+  const handleLogout = () => {
+    // In a real app, you'd call Firebase signOut here.
+    router.push('/');
+  };
+
+  const bottomMenuItems = [
+      { href: "/dashboard/about", icon: Info, label: t("AboutUs") },
+      { href: "/dashboard/support", icon: LifeBuoy, label: t("Support") },
+      { href: "/dashboard/settings", icon: Settings, label: t("Settings") },
+      { href: "/", icon: LogOut, label: t("LogOut"), action: handleLogout },
+  ]
+
+  // The pathname will include the locale, e.g., /en/dashboard.
+  // We need to strip the locale for the isActive check.
+  const currentPath = `/${pathname.split("/").slice(2).join("/")}`;
 
   return (
     <Sidebar collapsible="icon" className="bg-card border-r">
@@ -65,7 +77,7 @@ export function AppSidebar() {
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
-                isActive={item.href === '/dashboard' ? pathname === item.href : pathname.startsWith(item.href)}
+                isActive={item.href === '/dashboard' ? currentPath === item.href : currentPath.startsWith(item.href)}
                 className="justify-start"
                 variant="ghost"
                 tooltip={item.label}
@@ -84,15 +96,17 @@ export function AppSidebar() {
           {bottomMenuItems.map((item) => (
              <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
-                asChild
-                isActive={pathname.startsWith(item.href) && item.href !== "/"}
+                onClick={item.action}
+                isActive={currentPath.startsWith(item.href) && item.href !== "/"}
                 className="justify-start"
                 variant="ghost"
                 tooltip={item.label}
               >
-                <Link href={item.href}>
-                  <item.icon className="h-5 w-5" />
-                  <span>{item.label}</span>
+                <Link href={item.action ? '#' : item.href}>
+                    <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.label}</span>
+                    </>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

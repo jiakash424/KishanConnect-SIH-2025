@@ -17,15 +17,33 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/hooks/use-auth";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
+const locales: Record<string, string> = {
+  en: "English",
+  hi: "हिन्दी",
+  ta: "தமிழ் (Tamil)",
+  te: "తెలుగు (Telugu)",
+  bn: "বাংলা (Bengali)",
+  mr: "मराठी (Marathi)",
+  pa: "ਪੰਜਾਬੀ (Punjabi)",
+};
 
 export function AppHeader() {
   const userAvatar = PlaceHolderImages.find((p) => p.id === "user-avatar");
   const { setTheme, theme } = useTheme();
   const { user } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const t = useTranslations("Header");
 
+  const onLocaleChange = (locale: string) => {
+    // The pathname is like `/en/dashboard/settings`
+    // We want to replace the first part with the new locale.
+    const newPath = `/${locale}/${pathname.split("/").slice(2).join("/")}`;
+    router.replace(newPath);
+  };
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -34,7 +52,7 @@ export function AppHeader() {
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           type="search"
-          placeholder="Search..."
+          placeholder={t('searchPlaceholder')}
           className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
         />
       </div>
@@ -46,8 +64,11 @@ export function AppHeader() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>English</DropdownMenuItem>
-          <DropdownMenuItem>हिन्दी</DropdownMenuItem>
+          {Object.keys(locales).map((locale) => (
+            <DropdownMenuItem key={locale} onClick={() => onLocaleChange(locale)}>
+              {locales[locale]}
+            </DropdownMenuItem>
+          ))}
         </DropdownMenuContent>
       </DropdownMenu>
       <Button variant="outline" size="icon" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
@@ -67,14 +88,14 @@ export function AppHeader() {
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{t('myAccount')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <Link href="/dashboard/settings"><DropdownMenuItem>Settings</DropdownMenuItem></Link>
-            <Link href="/dashboard/support"><DropdownMenuItem>Support</DropdownMenuItem></Link>
+            <Link href="/dashboard/settings"><DropdownMenuItem>{t('settings')}</DropdownMenuItem></Link>
+            <Link href="/dashboard/support"><DropdownMenuItem>{t('support')}</DropdownMenuItem></Link>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push('/')}>
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Logout</span>
+              <span>{t('logout')}</span>
             </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

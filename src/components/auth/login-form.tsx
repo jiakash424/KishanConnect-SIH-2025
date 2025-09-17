@@ -8,9 +8,11 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export function LoginForm() {
   const router = useRouter();
+  const pathname = usePathname();
   const { toast } = useToast();
   const [email, setEmail] = useState('farmer@example.com');
   const [password, setPassword] = useState('password');
@@ -28,7 +30,9 @@ export function LoginForm() {
         title: "Login Successful",
         description: "Welcome back!",
       });
-      router.push('/dashboard');
+      // Extract locale from the current path
+      const locale = pathname.split('/')[1] || 'en';
+      router.push(`/${locale}/dashboard`);
     } catch (error: any) {
       setError("An error occurred. Please try again.");
       console.error(error);
