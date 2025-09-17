@@ -3,6 +3,7 @@ import {
   Activity,
   AlertTriangle,
   ArrowUp,
+  Bot,
   Cloudy,
   DollarSign,
   Droplets,
