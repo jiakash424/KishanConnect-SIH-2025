@@ -16,10 +16,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/hooks/use-auth";
-import { auth } from "@/lib/firebase";
-import { signOut } from "firebase/auth";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 
 export function AppHeader() {
@@ -28,10 +26,6 @@ export function AppHeader() {
   const { user } = useAuth();
   const router = useRouter();
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    router.push('/');
-  };
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -78,7 +72,7 @@ export function AppHeader() {
             <Link href="/dashboard/settings"><DropdownMenuItem>Settings</DropdownMenuItem></Link>
             <Link href="/dashboard/support"><DropdownMenuItem>Support</DropdownMenuItem></Link>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem onClick={() => router.push('/')}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Logout</span>
             </DropdownMenuItem>

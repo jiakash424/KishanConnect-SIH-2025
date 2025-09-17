@@ -2,7 +2,6 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { LoginForm } from '@/components/auth/login-form';
 import { Logo } from '@/components/logo';
-import Link from 'next/link';
 
 export default function LoginPage() {
   const loginBg = PlaceHolderImages.find(p => p.id === 'login-background');
@@ -20,12 +19,6 @@ export default function LoginPage() {
             </p>
           </div>
           <LoginForm />
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
-            <Link href="/signup" className="underline">
-              Sign up
-            </Link>
-          </div>
         </div>
       </div>
       <div className="hidden bg-muted lg:block">

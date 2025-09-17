@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,20 +22,15 @@ export function LoginForm() {
     setLoading(true);
     setError(null);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      // Simulate login
+      await new Promise(resolve => setTimeout(resolve, 500));
       toast({
         title: "Login Successful",
         description: "Welcome back!",
       });
       router.push('/dashboard');
     } catch (error: any) {
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-            setError("No user found with this email or password. Please sign up or try again.");
-        } else if (error.code === 'auth/wrong-password') {
-            setError("Incorrect password. Please try again.");
-        } else {
-            setError("An error occurred. Please try again.");
-        }
+      setError("An error occurred. Please try again.");
       console.error(error);
     } finally {
       setLoading(false);
