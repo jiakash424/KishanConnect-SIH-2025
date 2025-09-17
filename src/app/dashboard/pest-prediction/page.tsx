@@ -36,14 +36,18 @@ export default function PestPredictionPage() {
       const weatherForecast = await getWeather({ location });
       setWeather(weatherForecast);
 
-      // 2. Format weather for prediction flow
-      const weatherSummary = weatherForecast.map(day => 
-        `${day.day}: ${day.condition}, Temp ${day.temp_min}°C-${day.temp_max}°C`
-      ).join('; ');
-      
-      // 3. Get pest prediction
-      const predictionResult = await getPestPrediction({ location, cropType, weatherForecast: weatherSummary });
-      setPrediction(predictionResult);
+      if (weatherForecast) {
+        // 2. Format weather for prediction flow
+        const weatherSummary = weatherForecast.map(day => 
+          `${day.day}: ${day.condition}, Temp ${day.temp_min}°C-${day.temp_max}°C`
+        ).join('; ');
+        
+        // 3. Get pest prediction
+        const predictionResult = await getPestPrediction({ location, cropType, weatherForecast: weatherSummary });
+        setPrediction(predictionResult);
+      } else {
+        throw new Error("Could not fetch weather data.");
+      }
 
     } catch (err) {
       setError("An error occurred while fetching predictions. Please try again.");

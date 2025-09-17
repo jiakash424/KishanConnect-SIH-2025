@@ -3,8 +3,20 @@
     {
       "id": "login-background",
       "description": "Lush green farm field under a blue sky.",
-      "imageUrl": "https://picsum.photos/seed/krishi1/1920/1080",
+      "imageUrl": "https://images.unsplash.com/photo-1560493676-0407186f467b?q=80&w=1974&auto=format&fit=crop",
       "imageHint": "farm field"
+    },
+    {
+      "id": "user-avatar",
+      "description": "Avatar of a farmer.",
+      "imageUrl": "https://picsum.photos/seed/user-avatar/100/100",
+      "imageHint": "farmer avatar"
+    },
+    {
+      "id": "health-map",
+      "description": "Spectral health map of a farm field.",
+      "imageUrl": "https://picsum.photos/seed/health-map/1200/800",
+      "imageHint": "spectral map"
     }
   ]
 }

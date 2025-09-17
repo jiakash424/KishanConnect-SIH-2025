@@ -22,49 +22,57 @@ export function AppHeader() {
   const { setTheme, theme } = useTheme();
 
   return (
-    <header className="sticky top-0 z-10 flex h-20 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
-      <SidebarTrigger className="md:hidden" />
-
-      <div className="flex-1">
-        <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search any of content"
-              className="w-full rounded-full bg-muted pl-10 text-lg h-12 border-transparent focus:border-ring focus:bg-background"
-            />
-          </div>
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+      <SidebarTrigger className="sm:hidden" />
+      <div className="relative ml-auto flex-1 md:grow-0">
+        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="search"
+          placeholder="Search..."
+          className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
+        />
       </div>
-
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-          <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <Button variant="outline" size="icon" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           <span className="sr-only">Toggle theme</span>
-        </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
+      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="icon">
               <Globe className="h-5 w-5" />
               <span className="sr-only">Toggle language</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
             <DropdownMenuLabel>Language</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>English</DropdownMenuItem>
             <DropdownMenuItem>हिन्दी (Hindi)</DropdownMenuItem>
             <DropdownMenuItem>বাংলা (Bengali)</DropdownMenuItem>
             <DropdownMenuItem>తెలుగు (Telugu)</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-        <Avatar className="h-10 w-10">
-            {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="User avatar" data-ai-hint={userAvatar.imageHint} />}
-            <AvatarFallback>FN</AvatarFallback>
-        </Avatar>
-
-      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+            <Button variant="secondary" size="icon" className="rounded-full">
+                <Avatar className="h-8 w-8">
+                    {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="User avatar" data-ai-hint={userAvatar.imageHint} />}
+                    <AvatarFallback>FN</AvatarFallback>
+                </Avatar>
+                <span className="sr-only">Toggle user menu</span>
+            </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Logout</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </header>
   );
 }

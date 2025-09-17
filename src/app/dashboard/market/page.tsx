@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useMemo, useCallback } from "react";
@@ -34,7 +33,9 @@ export default function MarketPage() {
   }, []);
 
   useEffect(() => {
-    fetchPrices(selectedCrop);
+    if (selectedCrop) {
+      fetchPrices(selectedCrop);
+    }
   }, [selectedCrop, fetchPrices]);
 
   return (

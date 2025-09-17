@@ -12,7 +12,7 @@ import {
 import { Logo } from "@/components/logo";
 import {
   LayoutDashboard,
-  AreaChart,
+  BarChart3,
   Sprout,
   FlaskConical,
   Bug,
@@ -27,7 +27,7 @@ import { usePathname } from "next/navigation";
 
 const menuItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/dashboard/analysis", icon: AreaChart, label: "Analytics" },
+  { href: "/dashboard/analysis", icon: BarChart3, label: "Analytics" },
   { href: "/dashboard/diagnostics", icon: Sprout, label: "Diagnostics" },
   { href: "/dashboard/soil-analysis", icon: FlaskConical, label: "Soil Analysis" },
   { href: "/dashboard/pest-prediction", icon: Bug, label: "Pest Prediction" },
@@ -45,20 +45,20 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="none" className="border-r bg-background">
-      <SidebarHeader>
+    <Sidebar collapsible="icon" className="bg-muted/40 border-r dark:bg-card">
+      <SidebarHeader className="h-14 flex items-center px-4 lg:px-6">
         <Logo />
       </SidebarHeader>
-      <SidebarContent className="p-4">
+      <SidebarContent className="flex-1 p-2">
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
                 isActive={item.href === '/dashboard' ? pathname === item.href : pathname.startsWith(item.href)}
-                className="justify-start data-[active=true]:bg-primary/10 data-[active=true]:text-primary font-semibold"
-                size="lg"
+                className="justify-start"
                 variant="ghost"
+                tooltip={item.label}
               >
                 <Link href={item.href}>
                   <item.icon className="h-5 w-5" />
@@ -69,16 +69,16 @@ export function AppSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="border-t p-4">
+      <SidebarFooter className="p-2">
         <SidebarMenu>
           {bottomMenuItems.map((item) => (
              <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
                 isActive={pathname.startsWith(item.href) && item.href !== "/"}
-                className="justify-start data-[active=true]:bg-primary/10 data-[active=true]:text-primary font-semibold"
-                size="lg"
+                className="justify-start"
                 variant="ghost"
+                tooltip={item.label}
               >
                 <Link href={item.href}>
                   <item.icon className="h-5 w-5" />
