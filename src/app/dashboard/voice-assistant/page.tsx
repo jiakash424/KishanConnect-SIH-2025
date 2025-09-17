@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { voiceAssistantCropInformation } from "@/ai/flows/voice-assistant-crop-information";
+import { textToSpeech } from "@/ai/flows/text-to-speech";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -36,7 +37,9 @@ export default function VoiceAssistantPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isListening, setIsListening] = useState(false);
+  const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -69,6 +72,12 @@ export default function VoiceAssistantPage() {
 
   }, []);
 
+  useEffect(() => {
+    if (audioSrc && audioRef.current) {
+      audioRef.current.play().catch(e => console.error("Audio play failed:", e));
+    }
+  }, [audioSrc]);
+
   const handleListen = () => {
     if (!recognition) {
         setError("Sorry, your browser does not support voice recognition.");
@@ -90,14 +99,20 @@ export default function VoiceAssistantPage() {
 
     const userMessage: Message = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
+    const currentInput = input;
     setInput("");
     setLoading(true);
     setError(null);
+    setAudioSrc(null);
 
     try {
-      const response = await voiceAssistantCropInformation({ query: input });
+      const response = await voiceAssistantCropInformation({ query: currentInput });
       const assistantMessage: Message = { role: "assistant", content: response.response };
       setMessages((prev) => [...prev, assistantMessage]);
+
+      const audioResponse = await textToSpeech({ text: response.response });
+      setAudioSrc(audioResponse.audio);
+
     } catch (error) {
       console.error("Error with voice assistant:", error);
       setError("Sorry, I'm having trouble connecting. Please try again later.");
@@ -192,6 +207,7 @@ export default function VoiceAssistantPage() {
           </form>
         </CardContent>
       </Card>
+      {audioSrc && <audio ref={audioRef} src={audioSrc} />}
     </div>
   );
 }
