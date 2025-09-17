@@ -1,5 +1,6 @@
-"use client";
 
+"use client";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -19,25 +20,55 @@ import {
   Sun,
   CloudRain
 } from "lucide-react";
-import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { PieChart, Pie, Cell } from "recharts";
+import { getWeather, GetWeatherForecastOutput } from "@/ai/flows/get-weather-forecast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const harvestingCostData = [
   { name: 'Wheat', value: 76000, color: 'hsl(var(--chart-1))' },
   { name: 'Rice', value: 24000, color: 'hsl(var(--chart-2))' },
 ];
 
+const WeatherIcon = ({ iconName, ...props }: { iconName: string, [key: string]: any }) => {
+    switch (iconName) {
+        case 'Sun': return <Sun {...props} />;
+        case 'CloudSun': return <CloudSun {...props} />;
+        case 'Cloudy': return <Cloudy {...props} />;
+        case 'CloudRain': return <CloudRain {...props} />;
+        case 'Wind': return <Wind {...props} />;
+        default: return <Cloud {...props} />;
+    }
+};
+
 export default function DashboardPage() {
-    const farmImage = PlaceHolderImages.find((p) => p.id === 'farm-image');
+  const farmImage = PlaceHolderImages.find((p) => p.id === 'farm-image');
+  const [weather, setWeather] = useState<GetWeatherForecastOutput | null>(null);
+  const [loadingWeather, setLoadingWeather] = useState(true);
+
+  useEffect(() => {
+    async function fetchWeather() {
+      try {
+        setLoadingWeather(true);
+        const forecast = await getWeather({ location: 'Delhi' });
+        setWeather(forecast);
+      } catch (error) {
+        console.error("Failed to fetch weather", error);
+        // You might want to set an error state here
+      } finally {
+        setLoadingWeather(false);
+      }
+    }
+    fetchWeather();
+  }, []);
 
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-[#E6F5D8] border-none">
+        <Card className="bg-card">
             <CardHeader>
                 <CardTitle className="text-sm font-medium text-muted-foreground">Wheat</CardTitle>
                 <CardDescription className="text-xs">Total production</CardDescription>
@@ -57,7 +88,7 @@ export default function DashboardPage() {
                 </div>
             </CardContent>
         </Card>
-        <Card className="bg-[#E6F5D8] border-none">
+        <Card className="bg-card">
             <CardHeader>
                 <CardTitle className="text-sm font-medium text-muted-foreground">Rice</CardTitle>
                 <CardDescription className="text-xs">Total production</CardDescription>
@@ -77,41 +108,30 @@ export default function DashboardPage() {
                 </div>
             </CardContent>
         </Card>
-        <Card className="col-span-1 lg:col-span-2 bg-[#E6F5D8] border-none">
+        <Card className="col-span-1 lg:col-span-2 bg-card">
             <CardHeader>
-                <CardTitle>Weather forecast</CardTitle>
+                <CardTitle>Weather forecast (Delhi)</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div className="flex flex-col items-center justify-center bg-white/50 rounded-lg p-4">
-                    <p className="font-semibold">Today</p>
-                    <CloudRain className="h-8 w-8 text-blue-500 my-2"/>
-                    <p className="font-bold text-lg">37°/23°</p>
-                    <p className="text-xs text-muted-foreground">Rainy - Cloudy</p>
-                </div>
-                 <div className="flex flex-col items-center justify-center">
-                    <p className="font-semibold">25 June</p>
-                    <Cloudy className="h-8 w-8 text-gray-500 my-2"/>
-                    <p className="font-bold text-lg">29°</p>
-                    <p className="text-xs text-muted-foreground">Thunderstorms</p>
-                </div>
-                 <div className="flex flex-col items-center justify-center">
-                    <p className="font-semibold">26 June</p>
-                    <CloudSun className="h-8 w-8 text-yellow-500 my-2"/>
-                    <p className="font-bold text-lg">32°</p>
-                    <p className="text-xs text-muted-foreground">Rainy cloudy</p>
-                </div>
-                 <div className="flex flex-col items-center justify-center">
-                    <p className="font-semibold">27 June</p>
-                    <Sun className="h-8 w-8 text-orange-500 my-2"/>
-                    <p className="font-bold text-lg">39°</p>
-                    <p className="text-xs text-muted-foreground">Semicloudy</p>
-                </div>
-                 <div className="flex flex-col items-center justify-center">
-                    <p className="font-semibold">28 June</p>
-                    <Sun className="h-8 w-8 text-orange-500 my-2"/>
-                    <p className="font-bold text-lg">42°</p>
-                    <p className="text-xs text-muted-foreground">Sunny - Humidity</p>
-                </div>
+                {loadingWeather ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} className="flex flex-col items-center justify-center p-4">
+                            <Skeleton className="h-5 w-16 mb-2" />
+                            <Skeleton className="h-8 w-8 my-2 rounded-full" />
+                            <Skeleton className="h-6 w-12 mb-1" />
+                            <Skeleton className="h-4 w-20" />
+                        </div>
+                    ))
+                ) : (
+                    weather?.map((day, index) => (
+                        <div key={index} className={`flex flex-col items-center justify-center ${index === 0 ? 'bg-muted/50 rounded-lg p-4' : ''}`}>
+                            <p className="font-semibold">{day.day}</p>
+                            <WeatherIcon iconName={day.icon} className="h-8 w-8 text-yellow-500 my-2"/>
+                            <p className="font-bold text-lg">{day.temp_max}°/{day.temp_min}°</p>
+                            <p className="text-xs text-muted-foreground text-center">{day.condition}</p>
+                        </div>
+                    ))
+                )}
             </CardContent>
         </Card>
       </div>
@@ -175,7 +195,7 @@ export default function DashboardPage() {
                     </div>
                 </CardContent>
             </Card>
-            <Card className="bg-[#E6F5D8] border-none">
+            <Card className="bg-card">
               <CardHeader>
                 <CardTitle>Harvesting Cost</CardTitle>
               </CardHeader>

@@ -20,6 +20,7 @@ import {
   Thermometer,
   Settings,
   LogOut,
+  Landmark
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -29,6 +30,7 @@ const menuItems = [
   { href: "/dashboard/analysis", icon: BarChart, label: "Analytics" },
   { href: "/dashboard/fields", icon: Tractor, label: "Fields" },
   { href: "/dashboard/harvesting", icon: Wheat, label: "Harvesting" },
+  { href: "/dashboard/market", icon: Landmark, label: "Market" },
   { href: "/dashboard/finances", icon: Banknote, label: "Finances" },
   { href: "/dashboard/weather", icon: Thermometer, label: "Weather" },
   { href: "/dashboard/settings", icon: Settings, label: "Settings" },
@@ -49,7 +51,7 @@ export function AppSidebar() {
               <SidebarMenuButton
                 asChild
                 isActive={item.href === '/dashboard' ? pathname === item.href : pathname.startsWith(item.href)}
-                className="justify-start data-[active=true]:text-sidebar-accent-foreground font-semibold"
+                className="justify-start data-[active=true]:bg-green-200/20 data-[active=true]:text-green-300 font-semibold"
                 size="lg"
               >
                 <Link href={item.href}>
