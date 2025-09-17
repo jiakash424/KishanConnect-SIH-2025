@@ -44,6 +44,11 @@ export function AppHeader() {
     const newPath = `/${locale}/${pathname.split("/").slice(2).join("/")}`;
     router.replace(newPath);
   };
+  
+  const handleLogout = () => {
+    const locale = pathname.split('/')[1] || 'en';
+    router.push(`/${locale}`);
+  };
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -93,7 +98,7 @@ export function AppHeader() {
             <Link href="/dashboard/settings"><DropdownMenuItem>{t('settings')}</DropdownMenuItem></Link>
             <Link href="/dashboard/support"><DropdownMenuItem>{t('support')}</DropdownMenuItem></Link>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push('/')}>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>{t('logout')}</span>
             </DropdownMenuItem>

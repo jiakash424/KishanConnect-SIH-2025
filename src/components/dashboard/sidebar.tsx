@@ -52,7 +52,9 @@ export function AppSidebar() {
   
   const handleLogout = () => {
     // In a real app, you'd call Firebase signOut here.
-    router.push('/');
+    // We are just navigating to the root which is the login page.
+    const locale = pathname.split('/')[1] || 'en';
+    router.push(`/${locale}`);
   };
 
   const bottomMenuItems = [
@@ -94,7 +96,7 @@ export function AppSidebar() {
       <SidebarFooter className="p-2">
         <SidebarMenu>
           {bottomMenuItems.map((item) => (
-             <SidebarMenuItem key={item.href}>
+             <SidebarMenuItem key={item.label}>
               <SidebarMenuButton
                 onClick={item.action}
                 isActive={currentPath.startsWith(item.href) && item.href !== "/"}
@@ -102,7 +104,7 @@ export function AppSidebar() {
                 variant="ghost"
                 tooltip={item.label}
               >
-                <Link href={item.action ? '#' : item.href}>
+                <Link href={item.action ? '#' : item.href} onClick={(e) => {if(item.action) e.preventDefault();}}>
                     <>
                         <item.icon className="h-5 w-5" />
                         <span>{item.label}</span>
