@@ -21,13 +21,14 @@ import {
   Settings,
   LogOut,
   Map,
+  Tractor,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const menuItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/dashboard/analysis", icon: BarChart3, label: "Analytics" },
+  { href: "/dashboard/analysis", icon: Tractor, label: "Analytics" },
   { href: "/dashboard/diagnostics", icon: Sprout, label: "Diagnostics" },
   { href: "/dashboard/soil-analysis", icon: FlaskConical, label: "Soil Analysis" },
   { href: "/dashboard/pest-prediction", icon: Bug, label: "Pest Prediction" },
@@ -45,7 +46,7 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="icon" className="bg-muted/40 border-r dark:bg-card">
+    <Sidebar collapsible="icon" className="bg-card border-r">
       <SidebarHeader className="h-14 flex items-center px-4 lg:px-6">
         <Logo />
       </SidebarHeader>

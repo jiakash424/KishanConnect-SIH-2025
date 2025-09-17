@@ -10,11 +10,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, Globe, Moon, Sun } from "lucide-react";
+import { Search, Moon, Sun } from "lucide-react";
 import { Input } from "../ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useTheme } from "next-themes";
+import { Logo } from "../logo";
 
 
 export function AppHeader() {
@@ -37,23 +38,7 @@ export function AppHeader() {
           <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           <span className="sr-only">Toggle theme</span>
       </Button>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon">
-              <Globe className="h-5 w-5" />
-              <span className="sr-only">Toggle language</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Language</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>English</DropdownMenuItem>
-            <DropdownMenuItem>हिन्दी (Hindi)</DropdownMenuItem>
-            <DropdownMenuItem>বাংলা (Bengali)</DropdownMenuItem>
-            <DropdownMenuItem>తెలుగు (Telugu)</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
+      
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
             <Button variant="secondary" size="icon" className="rounded-full">
