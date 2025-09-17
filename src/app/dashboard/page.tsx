@@ -176,7 +176,7 @@ export default function DashboardPage() {
             </ChartContainer>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>Weather</CardTitle>
             <CardDescription>{currentWeather?.full_description || "Loading weather..."}</CardDescription>
@@ -189,12 +189,12 @@ export default function DashboardPage() {
               <Skeleton className="h-10 w-full" />
             </CardContent>
           ) : (
-             <CardContent className="flex flex-col justify-between h-full">
+             <CardContent className="flex flex-col flex-grow justify-between">
                 <div className="flex items-center justify-center text-6xl font-bold text-primary">
                   {currentWeather.temp}°
                   <Cloudy className="h-16 w-16 ml-4" />
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-2 gap-4 text-sm mt-4">
                   <div className="flex items-center gap-2"><Thermometer className="w-4 h-4 text-muted-foreground" /> <span>High: {currentWeather.temp_max}°</span></div>
                   <div className="flex items-center gap-2"><Thermometer className="w-4 h-4 text-muted-foreground" /> <span>Low: {currentWeather.temp_min}°</span></div>
                   <div className="flex items-center gap-2"><Wind className="w-4 h-4 text-muted-foreground" /> <span>Wind: 12 km/h</span></div>
@@ -297,3 +297,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
