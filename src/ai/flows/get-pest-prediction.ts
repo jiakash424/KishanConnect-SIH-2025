@@ -10,7 +10,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const GetPestPredictionInputSchema = z.object({
+const GetPestPredictionInputSchema = z.object({
   location: z.string().describe('The geographical location (e.g., city, state).'),
   cropType: z.string().describe('The type of crop being grown.'),
   weatherForecast: z.string().describe('A 5-day weather forecast summary.'),
@@ -24,7 +24,7 @@ const RiskSchema = z.object({
     preventativeAction: z.string().describe('A key preventative action to take.'),
 });
 
-export const GetPestPredictionOutputSchema = z.object({
+const GetPestPredictionOutputSchema = z.object({
   predictions: z.array(RiskSchema).describe('A list of pest and disease risk predictions.'),
   summary: z.string().describe('An overall summary of the upcoming risk profile for the week.'),
 });
