@@ -31,8 +31,8 @@ export function LoginForm() {
       });
       router.push('/dashboard');
     } catch (error: any) {
-        if (error.code === 'auth/user-not-found') {
-            setError("No user found with this email. Please sign up.");
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+            setError("No user found with this email or password. Please sign up or try again.");
         } else if (error.code === 'auth/wrong-password') {
             setError("Incorrect password. Please try again.");
         } else {
