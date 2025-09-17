@@ -1,10 +1,10 @@
 import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { LoginForm } from '@/components/auth/login-form';
-import { Logo } from '@/components/logo';
 import Link from 'next/link';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { SignupForm } from '@/components/auth/signup-form';
+import { Logo } from '@/components/logo';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const loginBg = PlaceHolderImages.find(p => p.id === 'login-background');
 
   return (
@@ -12,23 +12,24 @@ export default function LoginPage() {
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
-            <div className="flex justify-center">
+             <div className="flex justify-center">
               <Logo />
             </div>
-            <p className="text-balance text-muted-foreground mt-2">
-              Enter your credentials to access your dashboard
+            <h1 className="text-3xl font-bold">Create an account</h1>
+            <p className="text-balance text-muted-foreground">
+              Enter your information to create a new account
             </p>
           </div>
-          <LoginForm />
+          <SignupForm />
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
-            <Link href="/signup" className="underline">
-              Sign up
+            Already have an account?{' '}
+            <Link href="/" className="underline">
+              Login
             </Link>
           </div>
         </div>
       </div>
-      <div className="hidden bg-muted lg:block">
+       <div className="hidden bg-muted lg:block">
         {loginBg && (
           <Image
             src={loginBg.imageUrl}

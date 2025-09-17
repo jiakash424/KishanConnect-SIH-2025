@@ -10,17 +10,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, Moon, Sun, Languages } from "lucide-react";
+import { Search, Moon, Sun, Languages, LogOut } from "lucide-react";
 import { Input } from "../ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useTheme } from "next-themes";
-import { Logo } from "../logo";
+import { useAuth } from "@/hooks/use-auth";
+import { auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 
 export function AppHeader() {
   const userAvatar = PlaceHolderImages.find((p) => p.id === "user-avatar");
   const { setTheme, theme } = useTheme();
+  const { user } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push('/');
+  };
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -55,8 +66,8 @@ export function AppHeader() {
         <DropdownMenuTrigger asChild>
             <Button variant="secondary" size="icon" className="rounded-full">
                 <Avatar className="h-8 w-8">
-                    {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="User avatar" data-ai-hint={userAvatar.imageHint} />}
-                    <AvatarFallback>FN</AvatarFallback>
+                    {userAvatar && <AvatarImage src={user?.photoURL || userAvatar.imageUrl} alt="User avatar" data-ai-hint={userAvatar.imageHint} />}
+                    <AvatarFallback>{user?.email?.charAt(0).toUpperCase() || 'F'}</AvatarFallback>
                 </Avatar>
                 <span className="sr-only">Toggle user menu</span>
             </Button>
@@ -64,10 +75,13 @@ export function AppHeader() {
         <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
+            <Link href="/dashboard/settings"><DropdownMenuItem>Settings</DropdownMenuItem></Link>
+            <Link href="/dashboard/support"><DropdownMenuItem>Support</DropdownMenuItem></Link>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Logout</span>
+            </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
