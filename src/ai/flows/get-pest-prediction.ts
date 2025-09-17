@@ -28,7 +28,7 @@ export const GetPestPredictionOutputSchema = z.object({
   predictions: z.array(RiskSchema).describe('A list of pest and disease risk predictions.'),
   summary: z.string().describe('An overall summary of the upcoming risk profile for the week.'),
 });
-export type GetPestPredictionOutput = z-infer<typeof GetPestPredictionOutputSchema>;
+export type GetPestPredictionOutput = z.infer<typeof GetPestPredictionOutputSchema>;
 
 export async function getPestPrediction(
   input: GetPestPredictionInput
