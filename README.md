@@ -1,5 +1,113 @@
-# Firebase Studio
+## Smart India Hackathon 2025 | Problem Statement SIH25099
 
-This is a NextJS starter in Firebase Studio.
+**AI-powered monitoring of crop health, soil condition, and pest risks using multispectral/hyperspectral imaging and sensor data.**
 
-To get started, take a look at src/app/page.tsx.
+**Organization:** MathWorks India Pvt. Ltd.
+
+### Problem Statement Overview
+Agriculture faces growing threats from soil degradation, unpredictable weather, and pest outbreaks, leading to reduced yields and economic losses. Traditional monitoring methods are often delayed, labor-intensive, and lack precision. There is a need for a unified software platform that integrates remote sensing and sensor data to provide timely, field-level insights on crop health, soil conditions, and pest risks using AI-driven analysis.
+
+---
+
+## Project Title: KrishiConnect – AI-Powered Crop Health & Risk Monitoring Platform
+
+### Solution Overview
+KrishiConnect is a unified software platform that leverages AI, remote sensing, and sensor data to deliver timely, field-level insights on crop health, soil conditions, and pest risks. It addresses the need for precision agriculture by automating diagnostics, contextual recommendations, and actionable alerts for farmers.
+
+### Key Technologies & Tools Used
+- Next.js (React): Modern web framework for building scalable, interactive dashboards.
+- Tailwind CSS: Utility-first CSS for rapid, responsive UI development.
+- Recharts: Data visualization for crop yield, soil, and pest trends.
+- Lucide-react: Icon library for intuitive UI.
+- Genkit + Zod: AI orchestration and schema validation for robust data handling.
+- Firebase (optional): For authentication and backend emulation.
+- Nix: Dev environment management.
+- Custom AI Flows: Modular agents for diagnosis, contextualization, onboarding, and voice assistant.
+
+### Core Features
+- AI-Powered Crop Health Analysis: Uses multispectral/hyperspectral imaging and sensor data for real-time diagnostics.
+- Disease & Pest Identification: Farmers upload plant images; AI identifies issues and suggests solutions/preventative measures.
+- Environmental Contextualization: Integrates weather, soil, and location data to improve prediction accuracy.
+- Interactive Spectral Health Maps: Visualizes crop health, soil summaries, and risk zones.
+- Alerts & Notifications: Timely updates on crop health and environmental changes.
+- User Dashboard: Central hub for health maps, trends, soil summaries, and risk zones.
+- Secure Authentication: Google/phone login for secure access.
+- Multilingual Support: Accessible to farmers across states.
+- AI Voice Assistant: Natural language Q&A for crop health, weather, and recommended actions.
+
+### How the Solution Works
+1. Data Collection: Farmers upload images (multispectral/hyperspectral), sensor data, and location info.
+2. AI Analysis: Custom AI flows process images and sensor data to diagnose crop health, soil condition, and pest risks.
+3. Contextual Recommendations: Environmental data (weather, soil) is used to refine predictions and suggest solutions.
+4. Visualization: Results are displayed via interactive maps, charts, and dashboards.
+5. Alerts & Assistant: Farmers receive timely notifications and can interact with the AI voice assistant for guidance.
+
+### Impact
+- Precision Agriculture: Enables timely, accurate, and actionable insights for farmers.
+- Reduced Losses: Early detection of risks minimizes yield loss and economic impact.
+- Scalability: Modular architecture supports expansion to new crops, regions, and languages.
+- Farmer-Friendly: Clean UI, intuitive navigation, and voice support ensure accessibility.
+
+### Summary Table
+
+| Component                | Technology/Module Used                | Purpose                                      |
+|--------------------------|---------------------------------------|----------------------------------------------|
+| Frontend                 | Next.js, Tailwind CSS, Recharts       | Dashboard, charts, maps, UI                  |
+| AI Flows                 | Genkit, Zod, Custom TS modules        | Diagnosis, contextualization, onboarding     |
+| Voice Assistant          | Genkit, Custom AI flow                | Natural language Q&A                         |
+| Data Visualization       | Recharts, Custom UI components        | Trends, health maps, risk zones              |
+| Authentication           | Firebase, Google/Phone login          | Secure user access                           |
+| Dev Environment          | Nix                                   | Consistent setup                             |
+| Multilingual Support     | Custom implementation                 | Accessibility for all states                 |
+
+---
+
+**KrishiConnect** directly addresses SIH25099 by integrating AI, remote sensing, and sensor data for precision crop monitoring, delivering a scalable, farmer-centric solution for India’s agricultural challenges.
+
+---
+
+## Project Team: Innovatrix
+
+**Team Leader:**
+- Name: Anushka Sharma
+- Roll No: 2300330120021
+- Branch & Sec: CS - A
+- Phone: 9045305411
+- Gmail: as4019844@gmail.com
+
+**Team Member 2:**
+- Name: Akash Kumar
+- Roll No: 2300331530011
+- Branch & Sec: CSE-Aiml / A
+- Phone: 9411621096
+- Gmail: jiakash427@gmail.com
+
+**Team Member 3:**
+- Name: Vishnu Yadav
+- Roll No: 2300331530125
+- Branch & Sec: CSE-Aiml / B
+- Phone: 6398394054
+- Gmail: vishnu29sep@gmail.com
+
+**Team Member 4:**
+- Name: Anshika Gupta
+- Roll No: 2300330100061
+- Branch & Sec: CSE / A
+- Phone: 8808389326
+- Gmail: anshikaagupta74286@gmail.com
+
+**Team Member 5:**
+- Name: Ankush Yadav
+- Roll No: 2300330100055
+- Branch & Sec: CSE / A
+- Phone: 805243476
+- Gmail: anyadav8052@gmail.com
+
+**Team Member 6:**
+- Name: Aparna Bhardwaj
+- Roll No: 2300330120022
+- Branch & Sec: CS - A
+- Phone: 9310939887
+- Gmail: aparnabhardwaj867@gmail.com
+
+---
