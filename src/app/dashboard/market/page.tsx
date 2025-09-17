@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { getMarketPrices, GetMarketPriceOutput } from "@/ai/flows/get-market-price";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -18,30 +18,24 @@ export default function MarketPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchPrices = useCallback(async (crop: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await getMarketPrices({ crop: crop });
+      setPrices(result);
+    } catch (err) {
+      console.error(err);
+      setError("Could not fetch market prices. Please try again later.");
+      setPrices([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    const fetchPrices = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const result = await getMarketPrices({ crop: selectedCrop });
-        setPrices(result);
-      } catch (err) {
-        console.error(err);
-        setError("Could not fetch market prices. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPrices();
-  }, [selectedCrop]);
-
-  const uniqueLocations = useMemo(() => {
-    const allPrices = prices; // In future could fetch all crops at once
-    const locations = new Set(allPrices.map(p => p.location));
-    return Array.from(locations);
-  }, [prices]);
-
+    fetchPrices(selectedCrop);
+  }, [selectedCrop, fetchPrices]);
 
   return (
     <div className="flex flex-col gap-8">

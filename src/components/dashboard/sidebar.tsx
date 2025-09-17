@@ -13,26 +13,26 @@ import {
 import { Logo } from "@/components/logo";
 import {
   LayoutDashboard,
-  BarChart,
+  BarChart2,
   Tractor,
   Wheat,
   Banknote,
   Thermometer,
   Settings,
   LogOut,
-  Landmark
+  Landmark,
+  Bot
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const menuItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/dashboard/analysis", icon: BarChart, label: "Analytics" },
-  { href: "/dashboard/fields", icon: Tractor, label: "Fields" },
-  { href: "/dashboard/harvesting", icon: Wheat, label: "Harvesting" },
+  { href: "/dashboard/analysis", icon: BarChart2, label: "Analytics" },
+  { href: "/dashboard/diagnostics", icon: Tractor, label: "Diagnostics" },
+  { href: "/dashboard/health-map", icon: Wheat, label: "Health Map" },
   { href: "/dashboard/market", icon: Landmark, label: "Market" },
-  { href: "/dashboard/finances", icon: Banknote, label: "Finances" },
-  { href: "/dashboard/weather", icon: Thermometer, label: "Weather" },
+  { href: "/dashboard/voice-assistant", icon: Bot, label: "Assistant" },
   { href: "/dashboard/settings", icon: Settings, label: "Settings" },
 ];
 

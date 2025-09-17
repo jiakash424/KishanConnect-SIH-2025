@@ -10,6 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -20,6 +22,7 @@ export default function VoiceAssistantPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,6 +42,7 @@ export default function VoiceAssistantPage() {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
+    setError(null);
 
     try {
       const response = await voiceAssistantCropInformation({ query: input });
@@ -46,11 +50,7 @@ export default function VoiceAssistantPage() {
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error("Error with voice assistant:", error);
-      const errorMessage: Message = {
-        role: "assistant",
-        content: "Sorry, I'm having trouble connecting. Please try again later.",
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      setError("Sorry, I'm having trouble connecting. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -73,6 +73,13 @@ export default function VoiceAssistantPage() {
         <CardContent className="flex-grow flex flex-col gap-4 overflow-hidden">
           <ScrollArea className="flex-grow pr-4" ref={scrollAreaRef}>
             <div className="space-y-4">
+              {messages.length === 0 && !loading && !error && (
+                <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
+                  <Bot className="h-12 w-12 mb-4" />
+                  <p className="text-lg font-medium">I am your farming assistant.</p>
+                  <p>Ask me about crop prices, weather, or pest control.</p>
+                </div>
+              )}
               {messages.map((message, index) => (
                 <div key={index} className={cn("flex items-start gap-4", message.role === "user" ? "justify-end" : "justify-start")}>
                   {message.role === "assistant" && (
@@ -102,6 +109,13 @@ export default function VoiceAssistantPage() {
               )}
             </div>
           </ScrollArea>
+           {error && (
+            <Alert variant="destructive" className="mt-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
           <form onSubmit={handleSubmit} className="flex items-center gap-2 border-t pt-4">
             <Input
@@ -111,9 +125,9 @@ export default function VoiceAssistantPage() {
               disabled={loading}
               className="flex-grow"
             />
-            <Button type="button" variant="outline" size="icon" disabled={loading}>
+            <Button type="button" variant="outline" size="icon" disabled>
               <Mic className="h-4 w-4" />
-              <span className="sr-only">Use voice</span>
+              <span className="sr-only">Use voice (coming soon)</span>
             </Button>
             <Button type="submit" size="icon" disabled={loading || !input}>
               <Send className="h-4 w-4" />
