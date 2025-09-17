@@ -25,6 +25,7 @@ import {
   Droplets,
   Flower,
   Info,
+  LifeBuoy,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -45,6 +46,7 @@ const menuItems = [
 
 const bottomMenuItems = [
     { href: "/dashboard/about", icon: Info, label: "About Us" },
+    { href: "/dashboard/support", icon: LifeBuoy, label: "Support" },
     { href: "/dashboard/settings", icon: Settings, label: "Settings" },
     { href: "/", icon: LogOut, label: "Log Out" },
 ]
