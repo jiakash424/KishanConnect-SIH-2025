@@ -17,18 +17,16 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/hooks/use-auth";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export function AppHeader() {
   const userAvatar = PlaceHolderImages.find((p) => p.id === "user-avatar");
   const { setTheme, theme } = useTheme();
   const { user } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
 
   const handleLogout = () => {
-    const locale = pathname.split('/')[1] || 'en';
-    router.push(`/${locale}`);
+    router.push(`/`);
   };
 
   return (

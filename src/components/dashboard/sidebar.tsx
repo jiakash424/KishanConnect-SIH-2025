@@ -51,8 +51,7 @@ export function AppSidebar() {
   const handleLogout = () => {
     // In a real app, you'd call Firebase signOut here.
     // We are just navigating to the root which is the login page.
-    const locale = pathname.split('/')[1] || 'en';
-    router.push(`/${locale}`);
+    router.push(`/`);
   };
 
   const bottomMenuItems = [
@@ -60,10 +59,6 @@ export function AppSidebar() {
       { href: "/dashboard/support", icon: LifeBuoy, label: "Support" },
       { href: "/dashboard/settings", icon: Settings, label: "Settings" },
   ]
-
-  // The pathname will include the locale, e.g., /en/dashboard.
-  // We need to strip the locale for the isActive check.
-  const currentPath = `/${pathname.split("/").slice(2).join("/")}`;
 
   return (
     <Sidebar collapsible="icon" className="bg-card border-r">
@@ -76,7 +71,7 @@ export function AppSidebar() {
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
-                isActive={item.href === '/dashboard' ? currentPath === item.href : currentPath.startsWith(item.href)}
+                isActive={pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))}
                 className="justify-start"
                 variant="ghost"
                 tooltip={item.label}
@@ -95,7 +90,7 @@ export function AppSidebar() {
           {bottomMenuItems.map((item) => (
              <SidebarMenuItem key={item.label}>
               <SidebarMenuButton
-                isActive={currentPath.startsWith(item.href)}
+                isActive={pathname.startsWith(item.href)}
                 className="justify-start"
                 variant="ghost"
                 tooltip={item.label}
