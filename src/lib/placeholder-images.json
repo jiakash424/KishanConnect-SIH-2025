@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "login-background",
+      "description": "Lush green farm field under a blue sky.",
+      "imageUrl": "https://picsum.photos/seed/krishi1/1920/1080",
+      "imageHint": "farm field"
+    },
+    {
+      "id": "health-map",
+      "description": "Colorful spectral map of a farm.",
+      "imageUrl": "https://picsum.photos/seed/krishi2/1200/800",
+      "imageHint": "spectral map"
+    },
+    {
+      "id": "user-avatar",
+      "description": "Placeholder for user avatar.",
+      "imageUrl": "https://picsum.photos/seed/krishi3/100/100",
+      "imageHint": "profile portrait"
+    },
+    {
+      "id": "crop-placeholder-1",
+      "description": "A healthy green leaf.",
+      "imageUrl": "https://picsum.photos/seed/krishi4/600/400",
+      "imageHint": "plant leaf"
+    },
+    {
+      "id": "crop-placeholder-2",
+      "description": "A leaf with signs of disease.",
+      "imageUrl": "https://picsum.photos/seed/krishi5/600/400",
+      "imageHint": "diseased leaf"
+    },
+    {
+      "id": "soil-texture",
+      "description": "Close-up of healthy farm soil.",
+      "imageUrl": "https://picsum.photos/seed/krishi6/600/400",
+      "imageHint": "soil texture"
+    }
+  ]
 }
