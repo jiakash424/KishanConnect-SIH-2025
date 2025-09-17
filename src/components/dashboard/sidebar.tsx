@@ -12,7 +12,6 @@ import {
 import { Logo } from "@/components/logo";
 import {
   LayoutDashboard,
-  BarChart3,
   Sprout,
   FlaskConical,
   Bug,
@@ -22,6 +21,9 @@ import {
   LogOut,
   Map,
   Tractor,
+  Lightbulb,
+  Droplets,
+  Flower,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -34,6 +36,9 @@ const menuItems = [
   { href: "/dashboard/pest-prediction", icon: Bug, label: "Pest Prediction" },
   { href: "/dashboard/health-map", icon: Map, label: "Health Map" },
   { href: "/dashboard/market", icon: Landmark, label: "Market" },
+  { href: "/dashboard/crop-advisor", icon: Lightbulb, label: "Crop Advisor" },
+  { href: "/dashboard/irrigation-schedule", icon: Droplets, label: "Irrigation" },
+  { href: "/dashboard/weed-identification", icon: Flower, label: "Weed ID" },
   { href: "/dashboard/voice-assistant", icon: Bot, label: "Assistant" },
 ];
 

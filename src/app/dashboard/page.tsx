@@ -11,6 +11,8 @@ import {
   Sunset,
   Thermometer,
   Wind,
+  Lightbulb,
+  Flower,
 } from 'lucide-react';
 import {
   Card,
@@ -209,7 +211,7 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-4">
+          <CardContent className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/diagnostics">
                     <Sprout className="h-6 w-6" />
@@ -232,6 +234,30 @@ export default function DashboardPage() {
                 <Link href="/dashboard/market">
                     <DollarSign className="h-6 w-6" />
                     <span>Check Market</span>
+                </Link>
+            </Button>
+            <Button asChild variant="outline" className="h-20 flex-col gap-1">
+                <Link href="/dashboard/crop-advisor">
+                    <Lightbulb className="h-6 w-6" />
+                    <span>Crop Advisor</span>
+                </Link>
+            </Button>
+             <Button asChild variant="outline" className="h-20 flex-col gap-1">
+                <Link href="/dashboard/irrigation-schedule">
+                    <Droplets className="h-6 w-6" />
+                    <span>Irrigation Plan</span>
+                </Link>
+            </Button>
+             <Button asChild variant="outline" className="h-20 flex-col gap-1">
+                <Link href="/dashboard/weed-identification">
+                    <Flower className="h-6 w-6" />
+                    <span>Identify Weed</span>
+                </Link>
+            </Button>
+             <Button asChild variant="outline" className="h-20 flex-col gap-1">
+                <Link href="/dashboard/voice-assistant">
+                    <Bot className="h-6 w-6" />
+                    <span>AI Assistant</span>
                 </Link>
             </Button>
           </CardContent>
