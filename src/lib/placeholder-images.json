@@ -35,6 +35,12 @@
       "description": "Close-up of healthy farm soil.",
       "imageUrl": "https://picsum.photos/seed/krishi6/600/400",
       "imageHint": "soil texture"
+    },
+    {
+      "id": "farm-image",
+      "description": "Illustration of a corn field with a wooden sign.",
+      "imageUrl": "https://picsum.photos/seed/agri1/800/450",
+      "imageHint": "corn field"
     }
   ]
 }

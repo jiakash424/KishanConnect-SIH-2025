@@ -13,43 +13,44 @@ import {
 import { Logo } from "@/components/logo";
 import {
   LayoutDashboard,
-  HeartPulse,
-  LineChart,
-  ScanLine,
-  Bot,
+  BarChart,
+  Tractor,
+  Wheat,
+  Banknote,
+  Thermometer,
   Settings,
   LogOut,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 const menuItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/dashboard/health-map", icon: HeartPulse, label: "Health Map" },
-  { href: "/dashboard/analysis", icon: LineChart, label: "Analysis" },
-  { href: "/dashboard/diagnostics", icon: ScanLine, label: "Diagnostics" },
-  { href: "/dashboard/voice-assistant", icon: Bot, label: "Voice Assistant" },
+  { href: "/dashboard/analysis", icon: BarChart, label: "Analytics" },
+  { href: "/dashboard/fields", icon: Tractor, label: "Fields" },
+  { href: "/dashboard/harvesting", icon: Wheat, label: "Harvesting" },
+  { href: "/dashboard/finances", icon: Banknote, label: "Finances" },
+  { href: "/dashboard/weather", icon: Thermometer, label: "Weather" },
+  { href: "/dashboard/settings", icon: Settings, label: "Settings" },
 ];
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const userAvatar = PlaceHolderImages.find((p) => p.id === "user-avatar");
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="none" className="border-r-0">
       <SidebarHeader>
         <Logo />
       </SidebarHeader>
-      <SidebarContent className="p-2">
+      <SidebarContent className="p-4">
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
                 isActive={item.href === '/dashboard' ? pathname === item.href : pathname.startsWith(item.href)}
-                tooltip={item.label}
+                className="justify-start data-[active=true]:text-sidebar-accent-foreground font-semibold"
+                size="lg"
               >
                 <Link href={item.href}>
                   <item.icon />
@@ -60,32 +61,10 @@ export function AppSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="border-t p-2">
+      <SidebarFooter className="border-t-0 p-4">
         <SidebarMenu>
-            <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                    <Link href="#" className="w-full justify-start">
-                        <div className="flex items-center gap-2">
-                        <Avatar className="h-8 w-8">
-                            {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="User avatar" />}
-                            <AvatarFallback>FN</AvatarFallback>
-                        </Avatar>
-                        <span className="truncate">Farmer Name</span>
-                        </div>
-                    </Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarSeparator />
-            <SidebarMenuItem>
-             <SidebarMenuButton asChild tooltip="Settings">
-                <Link href="#">
-                  <Settings />
-                  <span>Settings</span>
-                </Link>
-              </SidebarMenuButton>
-          </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip="Log Out">
+            <SidebarMenuButton asChild className="w-full justify-start font-semibold" size="lg">
               <Link href="/">
                 <LogOut />
                 <span>Log Out</span>
