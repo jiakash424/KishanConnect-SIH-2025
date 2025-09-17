@@ -2,12 +2,9 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { LoginForm } from '@/components/auth/login-form';
 import { Logo } from '@/components/logo';
-import {useTranslations} from 'next-intl';
-import Link from 'next/link';
 
 export default function LoginPage() {
   const loginBg = PlaceHolderImages.find(p => p.id === 'login-background');
-  const t = useTranslations('LoginPage');
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-screen">
@@ -18,7 +15,7 @@ export default function LoginPage() {
               <Logo />
             </div>
             <p className="text-balance text-muted-foreground mt-2">
-              {t('description')}
+              Enter your credentials to access your dashboard
             </p>
           </div>
           <LoginForm />

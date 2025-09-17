@@ -14,32 +14,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Bell, User, Palette, Languages } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-
-const locales: Record<string, string> = {
-  en: "English",
-  hi: "हिन्दी (Hindi)",
-  ta: "தமிழ் (Tamil)",
-  te: "తెలుగు (Telugu)",
-  bn: "বাংলা (Bengali)",
-  mr: "मराठी (Marathi)",
-  pa: "ਪੰਜਾਬੀ (Punjabi)",
-};
 
 export default function SettingsPage() {
     const { setTheme } = useTheme();
-    const router = useRouter();
-    const pathname = usePathname();
-
-    const onLocaleChange = (locale: string) => {
-        // The pathname is like `/en/dashboard/settings`
-        // We want to replace the first part with the new locale.
-        const currentLocale = pathname.split("/")[1];
-        const newPath = pathname.replace(currentLocale, locale);
-        router.replace(newPath);
-    };
-    
-    const currentLocale = pathname.split("/")[1] || "en";
 
   return (
     <div className="flex flex-col gap-8">
@@ -92,14 +69,12 @@ export default function SettingsPage() {
                  </div>
                  <div className="space-y-2">
                     <Label htmlFor="language">Language</Label>
-                     <Select defaultValue={currentLocale} onValueChange={onLocaleChange}>
+                     <Select defaultValue="en">
                         <SelectTrigger id="language">
                             <SelectValue placeholder="Select language" />
                         </SelectTrigger>
                         <SelectContent>
-                            {Object.keys(locales).map((locale) => (
-                                <SelectItem key={locale} value={locale}>{locales[locale]}</SelectItem>
-                            ))}
+                            <SelectItem value="en">English</SelectItem>
                         </SelectContent>
                     </Select>
                  </div>

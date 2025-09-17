@@ -35,7 +35,6 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
-import { useTranslations } from 'next-intl';
 
 const chartData = [
   { month: "January", yield: 186 },
@@ -54,7 +53,6 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export default function DashboardPage() {
-  const t = useTranslations('DashboardPage');
   const [weather, setWeather] = useState<GetWeatherForecastOutput | null>(null);
   const [loadingWeather, setLoadingWeather] = useState(true);
   const [marketPrices, setMarketPrices] = useState<GetMarketPriceOutput | null>(null);
@@ -97,56 +95,56 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('totalRevenue')}
+              Total Revenue
             </CardTitle>
             <IndianRupee className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">₹45,231.89</div>
             <p className="text-xs text-muted-foreground">
-              {t('revenueInsight')}
+              +20.1% from last month
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('cropHealth')}
+              Crop Health
             </CardTitle>
             <Sprout className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">92%</div>
             <p className="text-xs text-muted-foreground">
-              {t('healthInsight')}
+              -1.2% from yesterday
             </p>
           </CardContent>
         </Card>
          <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('soilMoisture')}
+              Soil Moisture
             </CardTitle>
             <Droplets className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">68%</div>
             <p className="text-xs text-muted-foreground">
-              {t('moistureInsight')}
+              Optimal level
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('activeAlerts')}
+              Active Alerts
             </CardTitle>
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">2</div>
             <p className="text-xs text-muted-foreground">
-              {t('alertsInsight')}
+              1 new pest alert
             </p>
           </CardContent>
         </Card>
@@ -155,8 +153,8 @@ export default function DashboardPage() {
        <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
            <CardHeader>
-            <CardTitle>{t('yieldAnalyticsTitle')}</CardTitle>
-            <CardDescription>{t('yieldAnalyticsDescription')}</CardDescription>
+            <CardTitle>Yield Analytics</CardTitle>
+            <CardDescription>Showing yield for the last 6 months.</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig}>
@@ -180,7 +178,7 @@ export default function DashboardPage() {
         </Card>
         <Card className="flex flex-col">
           <CardHeader>
-            <CardTitle>{t('weatherTitle')}</CardTitle>
+            <CardTitle>Weather</CardTitle>
             <CardDescription>{currentWeather?.full_description || "Loading weather..."}</CardDescription>
           </CardHeader>
           {loadingWeather || !currentWeather ? (
@@ -212,7 +210,7 @@ export default function DashboardPage() {
        <div className="grid gap-6 md:grid-cols-2">
          <Card>
           <CardHeader>
-            <CardTitle>{t('quickActionsTitle')}</CardTitle>
+            <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Button asChild variant="outline" className="h-20 flex-col gap-1">
@@ -267,8 +265,8 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>{t('marketPricesTitle')}</CardTitle>
-            <CardDescription>{t('marketPricesDescription')}</CardDescription>
+            <CardTitle>Market Prices (Wheat)</CardTitle>
+            <CardDescription>Latest prices from major markets.</CardDescription>
           </CardHeader>
           <CardContent>
             {loadingPrices ? (
