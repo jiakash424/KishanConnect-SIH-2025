@@ -5,7 +5,7 @@ import {
   ArrowUp,
   Bot,
   Cloudy,
-  DollarSign,
+  IndianRupee,
   Droplets,
   Sprout,
   Sunrise,
@@ -97,7 +97,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">
               Total Revenue
             </CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <IndianRupee className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">₹45,231.89</div>
@@ -233,7 +233,7 @@ export default function DashboardPage() {
             </Button>
              <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/market">
-                    <DollarSign className="h-6 w-6" />
+                    <IndianRupee className="h-6 w-6" />
                     <span>Check Market</span>
                 </Link>
             </Button>
@@ -297,5 +297,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

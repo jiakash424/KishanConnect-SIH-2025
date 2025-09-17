@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { UploadCloud, Leaf, Shield, TestTube2, AlertCircle, SprayCan, DollarSign } from "lucide-react";
+import { UploadCloud, Leaf, Shield, TestTube2, AlertCircle, SprayCan, IndianRupee } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function DiagnosticsPage() {
@@ -56,7 +56,7 @@ export default function DiagnosticsPage() {
       <h4 className="font-semibold text-md">{treatment.name}</h4>
       <p className="text-sm text-muted-foreground mt-1">{treatment.description}</p>
       <div className="flex items-center text-sm text-muted-foreground mt-2 gap-2">
-        <DollarSign className="h-4 w-4" />
+        <IndianRupee className="h-4 w-4" />
         <span>{treatment.estimatedCost}</span>
       </div>
     </div>
