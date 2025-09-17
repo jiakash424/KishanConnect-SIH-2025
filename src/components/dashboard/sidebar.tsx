@@ -24,6 +24,7 @@ import {
   Lightbulb,
   Droplets,
   Flower,
+  Info,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -43,6 +44,7 @@ const menuItems = [
 ];
 
 const bottomMenuItems = [
+    { href: "/dashboard/about", icon: Info, label: "About Us" },
     { href: "/dashboard/settings", icon: Settings, label: "Settings" },
     { href: "/", icon: LogOut, label: "Log Out" },
 ]
