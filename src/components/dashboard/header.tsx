@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, Moon, Sun } from "lucide-react";
+import { Search, Moon, Sun, Languages } from "lucide-react";
 import { Input } from "../ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -33,6 +33,18 @@ export function AppHeader() {
           className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
         />
       </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="icon">
+            <Languages className="h-[1.2rem] w-[1.2rem]" />
+            <span className="sr-only">Change language</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>English</DropdownMenuItem>
+          <DropdownMenuItem>हिन्दी</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <Button variant="outline" size="icon" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
           <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
