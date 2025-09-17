@@ -15,6 +15,13 @@ const CropDiseasePestIdentificationInputSchema = z.object({
 export type CropDiseasePestIdentificationInput =
   z.infer<typeof CropDiseasePestIdentificationInputSchema>;
 
+const TreatmentSchema = z.object({
+    type: z.enum(['Organic', 'Chemical']).describe('The type of treatment.'),
+    name: z.string().describe('The name of the treatment product or method.'),
+    description: z.string().describe('A description of how to apply the treatment.'),
+    estimatedCost: z.string().describe('The estimated cost of the treatment (e.g., "₹500 - ₹800 per acre").'),
+});
+
 const CropDiseasePestIdentificationOutputSchema = z.object({
   identification: z.object({
     diseaseOrPest: z.string().describe('The identified disease or pest.'),
@@ -22,7 +29,10 @@ const CropDiseasePestIdentificationOutputSchema = z.object({
       .number()
       .describe('The confidence level of the identification (0-1).'),
   }),
-  solutions: z.array(z.string()).describe('Recommended solutions.'),
+  treatmentGuidance: z.object({
+    organic: z.array(TreatmentSchema).describe('Recommended organic treatment options.'),
+    chemical: z.array(TreatmentSchema).describe('Recommended chemical treatment options.'),
+  }),
   preventativeMeasures: z.array(z.string()).describe('Preventative measures.'),
 });
 export type CropDiseasePestIdentificationOutput =
@@ -39,11 +49,14 @@ const prompt = ai.definePrompt({
   input: {schema: CropDiseasePestIdentificationInputSchema},
   output: {schema: CropDiseasePestIdentificationOutputSchema},
   prompt: `You are an expert in plant pathology and entomology.
-  Your task is to identify potential plant diseases and pests from the image provided and suggest solutions and preventative measures.  Use the following as the primary source of information about the plant.
-
+  Your task is to identify potential plant diseases and pests from the image provided.
+  Based on your identification, provide detailed treatment guidance, including both organic and chemical options. For each treatment, include the name, description, and an estimated cost.
+  Also, suggest a list of preventative measures.
+  
+  Use the following as the primary source of information about the plant.
   Photo: {{media url=photoDataUri}}
 
-  Please provide the identification, solutions, and preventative measures in the output. Return a confidence score between 0 and 1 for the identification.
+  Please return the identification, confidence score, detailed treatment options (organic and chemical), and preventative measures.
   `,
 });
 

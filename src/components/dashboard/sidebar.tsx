@@ -8,39 +8,44 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarSeparator
 } from "@/components/ui/sidebar";
 import { Logo } from "@/components/logo";
 import {
   LayoutDashboard,
-  BarChart2,
-  Tractor,
-  Wheat,
-  Banknote,
-  Thermometer,
+  AreaChart,
+  Sprout,
+  FlaskConical,
+  Bug,
+  Landmark,
+  Bot,
   Settings,
   LogOut,
-  Landmark,
-  Bot
+  Map,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const menuItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/dashboard/analysis", icon: BarChart2, label: "Analytics" },
-  { href: "/dashboard/diagnostics", icon: Tractor, label: "Diagnostics" },
-  { href: "/dashboard/health-map", icon: Wheat, label: "Health Map" },
+  { href: "/dashboard/analysis", icon: AreaChart, label: "Analytics" },
+  { href: "/dashboard/diagnostics", icon: Sprout, label: "Diagnostics" },
+  { href: "/dashboard/soil-analysis", icon: FlaskConical, label: "Soil Analysis" },
+  { href: "/dashboard/pest-prediction", icon: Bug, label: "Pest Prediction" },
+  { href: "/dashboard/health-map", icon: Map, label: "Health Map" },
   { href: "/dashboard/market", icon: Landmark, label: "Market" },
   { href: "/dashboard/voice-assistant", icon: Bot, label: "Assistant" },
-  { href: "/dashboard/settings", icon: Settings, label: "Settings" },
 ];
+
+const bottomMenuItems = [
+    { href: "/dashboard/settings", icon: Settings, label: "Settings" },
+    { href: "/", icon: LogOut, label: "Log Out" },
+]
 
 export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="none" className="border-r-0">
+    <Sidebar collapsible="none" className="border-r bg-background">
       <SidebarHeader>
         <Logo />
       </SidebarHeader>
@@ -51,11 +56,12 @@ export function AppSidebar() {
               <SidebarMenuButton
                 asChild
                 isActive={item.href === '/dashboard' ? pathname === item.href : pathname.startsWith(item.href)}
-                className="justify-start data-[active=true]:bg-green-200/20 data-[active=true]:text-green-300 font-semibold"
+                className="justify-start data-[active=true]:bg-primary/10 data-[active=true]:text-primary font-semibold"
                 size="lg"
+                variant="ghost"
               >
                 <Link href={item.href}>
-                  <item.icon />
+                  <item.icon className="h-5 w-5" />
                   <span>{item.label}</span>
                 </Link>
               </SidebarMenuButton>
@@ -63,16 +69,24 @@ export function AppSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="border-t-0 p-4">
+      <SidebarFooter className="border-t p-4">
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild className="w-full justify-start font-semibold" size="lg">
-              <Link href="/">
-                <LogOut />
-                <span>Log Out</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {bottomMenuItems.map((item) => (
+             <SidebarMenuItem key={item.href}>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname.startsWith(item.href) && item.href !== "/"}
+                className="justify-start data-[active=true]:bg-primary/10 data-[active=true]:text-primary font-semibold"
+                size="lg"
+                variant="ghost"
+              >
+                <Link href={item.href}>
+                  <item.icon className="h-5 w-5" />
+                  <span>{item.label}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

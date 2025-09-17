@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { UploadCloud, Leaf, Shield, TestTube2, AlertCircle } from "lucide-react";
+import { UploadCloud, Leaf, Shield, TestTube2, AlertCircle, SprayCan, DollarSign } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function DiagnosticsPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -50,20 +51,15 @@ export default function DiagnosticsPage() {
     }
   };
 
-  const ResultCard = ({ title, icon, items }: { title: string; icon: React.ReactNode; items: string[] }) => (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          {icon}
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ul className="list-disc space-y-2 pl-5">
-          {items.map((item, index) => <li key={index}>{item}</li>)}
-        </ul>
-      </CardContent>
-    </Card>
+  const TreatmentCard = ({ treatment }: { treatment: { name: string, description: string, estimatedCost: string } }) => (
+    <div className="p-4 border rounded-lg bg-background">
+      <h4 className="font-semibold text-md">{treatment.name}</h4>
+      <p className="text-sm text-muted-foreground mt-1">{treatment.description}</p>
+      <div className="flex items-center text-sm text-muted-foreground mt-2 gap-2">
+        <DollarSign className="h-4 w-4" />
+        <span>{treatment.estimatedCost}</span>
+      </div>
+    </div>
   );
 
   return (
@@ -71,11 +67,11 @@ export default function DiagnosticsPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Disease & Pest Identification</h1>
         <p className="text-muted-foreground">
-          Upload an image of an affected plant to get an AI-powered diagnosis.
+          Upload an image of an affected plant to get an AI-powered diagnosis and treatment plan.
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-8">
+      <div className="grid lg:grid-cols-2 gap-8 items-start">
         <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>Upload Crop Image</CardTitle>
@@ -99,13 +95,13 @@ export default function DiagnosticsPage() {
           </CardContent>
         </Card>
 
-        <div className="space-y-8">
+        <div className="space-y-6">
           {loading && (
-            <>
-              <Skeleton className="h-40 w-full" />
-              <Skeleton className="h-40 w-full" />
-              <Skeleton className="h-40 w-full" />
-            </>
+            <div className="space-y-4">
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-48 w-full" />
+              <Skeleton className="h-48 w-full" />
+            </div>
           )}
 
           {error && (
@@ -124,17 +120,52 @@ export default function DiagnosticsPage() {
                   <CardDescription>Confidence: {Math.round(result.identification.confidence * 100)}%</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-lg font-semibold">{result.identification.diseaseOrPest}</p>
+                  <p className="text-xl font-semibold">{result.identification.diseaseOrPest}</p>
                 </CardContent>
               </Card>
 
-              <ResultCard title="Recommended Solutions" icon={<TestTube2/>} items={result.solutions} />
-              <ResultCard title="Preventative Measures" icon={<Shield/>} items={result.preventativeMeasures} />
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><SprayCan />Treatment Guidance</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Tabs defaultValue="organic">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="organic">Organic</TabsTrigger>
+                      <TabsTrigger value="chemical">Chemical</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="organic" className="mt-4 space-y-4">
+                      {result.treatmentGuidance.organic.length > 0 ? (
+                        result.treatmentGuidance.organic.map((t, i) => <TreatmentCard key={`org-${i}`} treatment={t} />)
+                      ) : <p className="text-sm text-muted-foreground text-center py-4">No organic treatments suggested.</p>}
+                    </TabsContent>
+                    <TabsContent value="chemical" className="mt-4 space-y-4">
+                       {result.treatmentGuidance.chemical.length > 0 ? (
+                        result.treatmentGuidance.chemical.map((t, i) => <TreatmentCard key={`chem-${i}`} treatment={t} />)
+                      ) : <p className="text-sm text-muted-foreground text-center py-4">No chemical treatments suggested.</p>}
+                    </TabsContent>
+                  </Tabs>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Shield/>
+                    Preventative Measures
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="list-disc space-y-2 pl-5 text-sm">
+                    {result.preventativeMeasures.map((item, index) => <li key={index}>{item}</li>)}
+                  </ul>
+                </CardContent>
+              </Card>
             </>
           )}
 
           {!result && !loading && !error && (
-             <div className="flex items-center justify-center h-full border-2 border-dashed rounded-lg">
+             <div className="flex h-full min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed">
                 <p className="text-muted-foreground">Analysis results will appear here.</p>
              </div>
           )}
