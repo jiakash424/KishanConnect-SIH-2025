@@ -61,7 +61,6 @@ export function AppSidebar() {
       { href: "/dashboard/about", icon: Info, label: t("AboutUs") },
       { href: "/dashboard/support", icon: LifeBuoy, label: t("Support") },
       { href: "/dashboard/settings", icon: Settings, label: t("Settings") },
-      { href: "/", icon: LogOut, label: t("LogOut"), action: handleLogout },
   ]
 
   // The pathname will include the locale, e.g., /en/dashboard.
@@ -98,21 +97,30 @@ export function AppSidebar() {
           {bottomMenuItems.map((item) => (
              <SidebarMenuItem key={item.label}>
               <SidebarMenuButton
-                onClick={item.action}
-                isActive={currentPath.startsWith(item.href) && item.href !== "/"}
+                isActive={currentPath.startsWith(item.href)}
                 className="justify-start"
                 variant="ghost"
                 tooltip={item.label}
+                asChild
               >
-                <Link href={item.action ? '#' : item.href} onClick={(e) => {if(item.action) e.preventDefault();}}>
-                    <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.label}</span>
-                    </>
+                <Link href={item.href}>
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.label}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
+            <SidebarMenuItem>
+                 <SidebarMenuButton
+                    onClick={handleLogout}
+                    className="justify-start"
+                    variant="ghost"
+                    tooltip={t("LogOut")}
+                >
+                    <LogOut className="h-5 w-5" />
+                    <span>{t("LogOut")}</span>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

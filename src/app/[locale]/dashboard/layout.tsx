@@ -1,3 +1,5 @@
+"use client";
+
 import { SidebarProvider, Sidebar, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/dashboard/sidebar";
 import { AppHeader } from "@/components/dashboard/header";
