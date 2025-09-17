@@ -10,7 +10,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const GetSoilAnalysisInputSchema = z.object({
+const GetSoilAnalysisInputSchema = z.object({
   photoDataUri: z
     .string()
     .describe(
@@ -31,7 +31,7 @@ const RecommendedCropSchema = z.object({
     reason: z.string().describe('Reason for recommending this crop based on soil and climate.'),
 });
 
-export const GetSoilAnalysisOutputSchema = z.object({
+const GetSoilAnalysisOutputSchema = z.object({
   soilType: z.string().describe('The identified type of soil (e.g., "Sandy Loam", "Clay").'),
   phLevel: z.number().describe('The estimated pH level of the soil.'),
   organicMatterPercentage: z.number().describe('The estimated percentage of organic matter in the soil.'),
