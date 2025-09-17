@@ -9,6 +9,7 @@ export function LoginForm() {
   const router = useRouter();
 
   const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
     router.push('/dashboard');
   };
 
@@ -28,7 +29,7 @@ export function LoginForm() {
   );
 
   return (
-    <form action="/dashboard" className="grid gap-4">
+    <form onSubmit={handleLogin} className="grid gap-4">
       <div className="grid gap-2">
         <Label htmlFor="email">Email</Label>
         <Input
