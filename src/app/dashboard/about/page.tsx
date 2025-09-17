@@ -26,7 +26,7 @@ const teamMembers = [
   {
     name: "Vishnu yadav",
     role: "Team Member",
-    rollNo: "23003315300125",
+    rollNo: "2300331530125",
     branch: "CSE-Aiml / B",
     phone: "6398394054",
     email: "vishnu29sep@gmail.com",
@@ -46,7 +46,7 @@ const teamMembers = [
     role: "Team Member",
     rollNo: "2300330100055",
     branch: "CSE / A",
-    phone: "805243476",
+    phone: "8052434076",
     email: "anyadav8052@gmail.com",
     avatar: "AY",
   },
