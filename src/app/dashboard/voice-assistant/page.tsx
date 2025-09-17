@@ -18,11 +18,24 @@ interface Message {
   content: string;
 }
 
+// SpeechRecognition type for browsers that support it
+const SpeechRecognition =
+  (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+let recognition: any = null;
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.lang = 'en-US'; // You can change this to 'hi-IN' for Hindi
+  recognition.interimResults = false;
+}
+
+
 export default function VoiceAssistantPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isListening, setIsListening] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,6 +46,43 @@ export default function VoiceAssistantPage() {
         }
     }
   }, [messages, loading]);
+
+   useEffect(() => {
+    if (!recognition) return;
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(transcript);
+      setLoading(false);
+      setIsListening(false);
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error("Speech recognition error", event.error);
+      setError("Sorry, there was an error with speech recognition.");
+      setIsListening(false);
+    };
+    
+    recognition.onend = () => {
+        setIsListening(false);
+    }
+
+  }, []);
+
+  const handleListen = () => {
+    if (!recognition) {
+        setError("Sorry, your browser does not support voice recognition.");
+        return;
+    }
+    if (isListening) {
+      recognition.stop();
+      setIsListening(false);
+    } else {
+      recognition.start();
+      setIsListening(true);
+    }
+  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,6 +157,12 @@ export default function VoiceAssistantPage() {
                     </div>
                  </div>
               )}
+               {isListening && (
+                 <div className="flex items-center gap-4 justify-center text-muted-foreground">
+                    <Mic className="h-5 w-5 animate-pulse text-primary"/>
+                    <span>Listening...</span>
+                 </div>
+              )}
             </div>
           </ScrollArea>
            {error && (
@@ -121,13 +177,13 @@ export default function VoiceAssistantPage() {
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your question here..."
+              placeholder="Type your question or use the mic..."
               disabled={loading}
               className="flex-grow"
             />
-            <Button type="button" variant="outline" size="icon" disabled>
+            <Button type="button" variant={isListening ? "default" : "outline"} size="icon" onClick={handleListen} disabled={loading || !SpeechRecognition}>
               <Mic className="h-4 w-4" />
-              <span className="sr-only">Use voice (coming soon)</span>
+              <span className="sr-only">Use voice</span>
             </Button>
             <Button type="submit" size="icon" disabled={loading || !input}>
               <Send className="h-4 w-4" />
