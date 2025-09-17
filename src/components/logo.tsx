@@ -97,7 +97,7 @@ export function Logo() {
           </g>
         </g>
       </svg>
-      <h1 className="text-xl font-bold text-foreground">Innovatrix</h1>
+      <h1 className="text-xl font-bold text-foreground">KrishiConnect</h1>
     </div>
   );
 }

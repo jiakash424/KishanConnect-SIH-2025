@@ -7,7 +7,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: 'Innovatrix',
+  title: 'KrishiConnect',
   description: 'AI-Powered Crop Health Analysis',
 };
 
