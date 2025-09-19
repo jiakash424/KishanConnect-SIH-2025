@@ -14,9 +14,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Bell, User, Palette, Languages } from "lucide-react";
+import { usePathname, useRouter } from 'next/navigation';
+import { useTransition } from 'react';
+
 
 export default function SettingsPage() {
     const { setTheme } = useTheme();
+    const router = useRouter();
+    const pathname = usePathname();
+    const [isPending, startTransition] = useTransition();
+
+    const handleLocaleChange = (locale: string) => {
+        const newPath = `/${locale}${pathname.substring(3)}`;
+        startTransition(() => {
+             router.replace(newPath);
+        });
+    };
 
   return (
     <div className="flex flex-col gap-8">
@@ -69,12 +82,18 @@ export default function SettingsPage() {
                  </div>
                  <div className="space-y-2">
                     <Label htmlFor="language">Language</Label>
-                     <Select defaultValue="en">
+                     <Select defaultValue={pathname.split('/')[1]} onValueChange={handleLocaleChange} disabled={isPending}>
                         <SelectTrigger id="language">
                             <SelectValue placeholder="Select language" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="en">English</SelectItem>
+                            <SelectItem value="hi">हिन्दी (Hindi)</SelectItem>
+                            <SelectItem value="bn">বাংলা (Bengali)</SelectItem>
+                            <SelectItem value="te">తెలుగు (Telugu)</SelectItem>
+                            <SelectItem value="mr">मराठी (Marathi)</SelectItem>
+                            <SelectItem value="ta">தமிழ் (Tamil)</SelectItem>
+                            <SelectItem value="pa">ਪੰਜਾਬੀ (Punjabi)</SelectItem>
                         </SelectContent>
                     </Select>
                  </div>

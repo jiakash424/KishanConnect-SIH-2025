@@ -1,10 +1,14 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import createMiddleware from 'next-intl/middleware';
  
-export function middleware(request: NextRequest) {
-  return NextResponse.next()
-}
+export default createMiddleware({
+  // A list of all locales that are supported
+  locales: ['en', 'hi', 'bn', 'te', 'ta', 'mr', 'pa'],
+ 
+  // Used when no locale matches
+  defaultLocale: 'en'
+});
  
 export const config = {
   // Match all pathnames except for static files
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/', '/(en|hi|bn|te|ta|mr|pa)/:path*']
 };

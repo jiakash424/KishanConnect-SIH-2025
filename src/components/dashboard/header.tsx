@@ -18,12 +18,14 @@ import { useTheme } from "next-themes";
 import { useAuth } from "@/hooks/use-auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from 'next-intl';
 
 export function AppHeader() {
   const userAvatar = PlaceHolderImages.find((p) => p.id === "user-avatar");
   const { setTheme, theme } = useTheme();
   const { user } = useAuth();
   const router = useRouter();
+  const t = useTranslations('Header');
 
   const handleLogout = () => {
     router.push(`/`);
@@ -36,7 +38,7 @@ export function AppHeader() {
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           type="search"
-          placeholder="Search..."
+          placeholder={t('searchPlaceholder')}
           className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
         />
       </div>
@@ -57,14 +59,14 @@ export function AppHeader() {
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{t('myAccount')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <Link href="/dashboard/settings"><DropdownMenuItem>Settings</DropdownMenuItem></Link>
-            <Link href="/dashboard/support"><DropdownMenuItem>Support</DropdownMenuItem></Link>
+            <Link href="/dashboard/settings"><DropdownMenuItem>{t('settings')}</DropdownMenuItem></Link>
+            <Link href="/dashboard/support"><DropdownMenuItem>{t('support')}</DropdownMenuItem></Link>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Logout</span>
+              <span>{t('logout')}</span>
             </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

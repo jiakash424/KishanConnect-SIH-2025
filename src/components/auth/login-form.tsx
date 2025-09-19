@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function LoginForm() {
   const router = useRouter();
@@ -16,6 +17,8 @@ export function LoginForm() {
   const [password, setPassword] = useState('password');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const t = useTranslations('LoginPage');
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +41,11 @@ export function LoginForm() {
   };
 
   return (
+    <>
+    <div className="text-center">
+        <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+        <p className="text-sm text-muted-foreground">{t('description')}</p>
+    </div>
     <form onSubmit={handleLogin} className="grid gap-4">
       {error && (
         <Alert variant="destructive">
@@ -79,5 +87,6 @@ export function LoginForm() {
         {loading ? 'Logging in...' : 'Login'}
       </Button>
     </form>
+    </>
   );
 }

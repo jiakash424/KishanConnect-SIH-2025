@@ -43,6 +43,7 @@ import { Bar, BarChart, CartesianGrid, XAxis, AreaChart, Area } from 'recharts';
 import { cn } from '@/lib/utils';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useTranslations } from 'next-intl';
 
 const chartData = [
   { month: "January", yield: 186 },
@@ -81,6 +82,8 @@ function WeatherCard() {
   const [loadingWeather, setLoadingWeather] = useState(true);
   const [tempUnit, setTempUnit] = useState<'C' | 'F'>('C');
   const [locationError, setLocationError] = useState<string | null>(null);
+  const t = useTranslations('DashboardPage');
+
 
   const fetchWeather = useCallback(async (location: string) => {
     setLoadingWeather(true);
@@ -136,7 +139,10 @@ function WeatherCard() {
 
   return (
       <Card className="lg:col-span-2">
-        <CardContent className="p-4">
+         <CardHeader>
+            <CardTitle>{t('weatherTitle')}</CardTitle>
+          </CardHeader>
+        <CardContent className="p-4 pt-0">
           {locationError && (
              <Alert variant="default" className="mb-2 text-xs bg-muted/80">
                 <LocateFixed className="h-4 w-4" />
@@ -235,6 +241,8 @@ function WeatherCard() {
 export default function DashboardPage() {
   const [marketPrices, setMarketPrices] = useState<GetMarketPriceOutput | null>(null);
   const [loadingPrices, setLoadingPrices] = useState(true);
+  const t = useTranslations('DashboardPage');
+  const tSidebar = useTranslations('Sidebar');
 
 
   const fetchMarketPrices = useCallback(async () => {
@@ -260,56 +268,56 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Revenue
+              {t('totalRevenue')}
             </CardTitle>
             <IndianRupee className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">₹45,231.89</div>
             <p className="text-xs text-muted-foreground">
-              +20.1% from last month
+              {t('revenueInsight')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Crop Health
+              {t('cropHealth')}
             </CardTitle>
             <Sprout className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">92%</div>
             <p className="text-xs text-muted-foreground">
-              -1.2% from yesterday
+              {t('healthInsight')}
             </p>
           </CardContent>
         </Card>
          <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Soil Moisture
+              {t('soilMoisture')}
             </CardTitle>
             <Droplets className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">68%</div>
             <p className="text-xs text-muted-foreground">
-              Optimal level
+              {t('moistureInsight')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Active Alerts
+              {t('activeAlerts')}
             </CardTitle>
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">2</div>
             <p className="text-xs text-muted-foreground">
-              1 new pest alert
+              {t('alertsInsight')}
             </p>
           </CardContent>
         </Card>
@@ -319,8 +327,8 @@ export default function DashboardPage() {
          <WeatherCard />
          <Card>
            <CardHeader>
-            <CardTitle>Yield Analytics</CardTitle>
-            <CardDescription>Showing yield for the last 6 months.</CardDescription>
+            <CardTitle>{t('yieldAnalyticsTitle')}</CardTitle>
+            <CardDescription>{t('yieldAnalyticsDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig}>
@@ -347,63 +355,63 @@ export default function DashboardPage() {
        <div className="grid gap-6 md:grid-cols-2">
          <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle>{t('quickActionsTitle')}</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/diagnostics">
                     <Sprout className="h-6 w-6" />
-                    <span>Diagnose Crop</span>
+                    <span>{tSidebar('Diagnostics')}</span>
                 </Link>
             </Button>
             <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/soil-analysis">
                     <Activity className="h-6 w-6" />
-                    <span>Analyze Soil</span>
+                    <span>{tSidebar('SoilAnalysis')}</span>
                 </Link>
             </Button>
              <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/pest-prediction">
                     <AlertTriangle className="h-6 w-6" />
-                    <span>Predict Pests</span>
+                    <span>{tSidebar('PestPrediction')}</span>
                 </Link>
             </Button>
              <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/market">
                     <IndianRupee className="h-6 w-6" />
-                    <span>Check Market</span>
+                    <span>{tSidebar('Market')}</span>
                 </Link>
             </Button>
             <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/crop-advisor">
                     <Lightbulb className="h-6 w-6" />
-                    <span>Crop Advisor</span>
+                    <span>{tSidebar('CropAdvisor')}</span>
                 </Link>
             </Button>
              <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/irrigation-schedule">
                     <Droplets className="h-6 w-6" />
-                    <span>Irrigation Plan</span>
+                    <span>{tSidebar('Irrigation')}</span>
                 </Link>
             </Button>
              <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/weed-identification">
                     <Flower className="h-6 w-6" />
-                    <span>Identify Weed</span>
+                    <span>{tSidebar('WeedID')}</span>
                 </Link>
             </Button>
              <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/voice-assistant">
                     <Bot className="h-6 w-6" />
-                    <span>AI Assistant</span>
+                    <span>{tSidebar('Assistant')}</span>
                 </Link>
             </Button>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Market Prices (Wheat)</CardTitle>
-            <CardDescription>Latest prices from major markets.</CardDescription>
+            <CardTitle>{t('marketPricesTitle')}</CardTitle>
+            <CardDescription>{t('marketPricesDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             {loadingPrices ? (

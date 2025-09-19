@@ -4,6 +4,7 @@ import '../globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/components/auth/auth-provider';
+import { NextIntlClientProvider, useMessages } from 'next-intl';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -19,10 +20,12 @@ export default function LocaleLayout({
   children: React.ReactNode;
   params: {locale: string};
 }) {
+  const messages = useMessages();
 
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -34,6 +37,7 @@ export default function LocaleLayout({
             </AuthProvider>
             <Toaster />
           </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

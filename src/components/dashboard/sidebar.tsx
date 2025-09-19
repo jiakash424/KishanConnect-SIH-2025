@@ -29,36 +29,38 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from 'next-intl';
 
 export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations('Sidebar');
 
   const menuItems = [
-    { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-    { href: "/dashboard/analysis", icon: Tractor, label: "Analytics" },
-    { href: "/dashboard/diagnostics", icon: Sprout, label: "Diagnostics" },
-    { href: "/dashboard/soil-analysis", icon: FlaskConical, label: "Soil Analysis" },
-    { href: "/dashboard/pest-prediction", icon: Bug, label: "Pest Prediction" },
-    { href: "/dashboard/health-map", icon: Map, label: "Health Map" },
-    { href: "/dashboard/market", icon: Landmark, label: "Market" },
-    { href: "/dashboard/crop-advisor", icon: Lightbulb, label: "Crop Advisor" },
-    { href: "/dashboard/irrigation-schedule", icon: Droplets, label: "Irrigation" },
-    { href: "/dashboard/weed-identification", icon: Flower, label: "Weed ID" },
-    { href: "/dashboard/voice-assistant", icon: Bot, label: "Assistant" },
+    { href: "/dashboard", icon: LayoutDashboard, label: t("Dashboard") },
+    { href: "/dashboard/analysis", icon: Tractor, label: t("Analytics") },
+    { href: "/dashboard/diagnostics", icon: Sprout, label: t("Diagnostics") },
+    { href: "/dashboard/soil-analysis", icon: FlaskConical, label: t("SoilAnalysis") },
+    { href: "/dashboard/pest-prediction", icon: Bug, label: t("PestPrediction") },
+    { href: "/dashboard/health-map", icon: Map, label: t("HealthMap") },
+    { href: "/dashboard/market", icon: Landmark, label: t("Market") },
+    { href: "/dashboard/crop-advisor", icon: Lightbulb, label: t("CropAdvisor") },
+    { href: "/dashboard/irrigation-schedule", icon: Droplets, label: t("Irrigation") },
+    { href: "/dashboard/weed-identification", icon: Flower, label: t("WeedID") },
+    { href: "/dashboard/voice-assistant", icon: Bot, label: t("Assistant") },
   ];
   
   const handleLogout = () => {
-    // In a real app, you'd call Firebase signOut here.
-    // We are just navigating to the root which is the login page.
     router.push(`/`);
   };
 
   const bottomMenuItems = [
-      { href: "/dashboard/about", icon: Info, label: "About Us" },
-      { href: "/dashboard/support", icon: LifeBuoy, label: "Support" },
-      { href: "/dashboard/settings", icon: Settings, label: "Settings" },
+      { href: "/dashboard/about", icon: Info, label: t("AboutUs") },
+      { href: "/dashboard/support", icon: LifeBuoy, label: t("Support") },
+      { href: "/dashboard/settings", icon: Settings, label: t("Settings") },
   ]
+  
+  const locale = pathname.split('/')[1];
 
   return (
     <Sidebar collapsible="icon" className="bg-card border-r">
@@ -71,7 +73,7 @@ export function AppSidebar() {
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
-                isActive={pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))}
+                isActive={pathname === `/${locale}${item.href}` || (item.href !== "/dashboard" && pathname.startsWith(`/${locale}${item.href}`)) }
                 className="justify-start"
                 variant="ghost"
                 tooltip={item.label}
@@ -90,7 +92,7 @@ export function AppSidebar() {
           {bottomMenuItems.map((item) => (
              <SidebarMenuItem key={item.label}>
               <SidebarMenuButton
-                isActive={pathname.startsWith(item.href)}
+                isActive={pathname.startsWith(`/${locale}${item.href}`)}
                 className="justify-start"
                 variant="ghost"
                 tooltip={item.label}
@@ -108,10 +110,10 @@ export function AppSidebar() {
                     onClick={handleLogout}
                     className="justify-start"
                     variant="ghost"
-                    tooltip="Log Out"
+                    tooltip={t('LogOut')}
                 >
                     <LogOut className="h-5 w-5" />
-                    <span>Log Out</span>
+                    <span>{t('LogOut')}</span>
                 </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>
