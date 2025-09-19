@@ -5,7 +5,7 @@
   },
   "DashboardPage": {
     "totalRevenue": "कुल राजस्व",
-    "revenueInsight": "पिछले महीने से +20.1%",
+    "revenueInsight": " पिछले महीने से +20.1%",
     "cropHealth": "फसल स्वास्थ्य",
     "healthInsight": "कल से -1.2%",
     "soilMoisture": "मिट्टी की नमी",
@@ -31,7 +31,7 @@
     "Irrigation": "सिंचाई",
     "WeedID": "खरपतवार पहचान",
     "Assistant": "सहायक",
-    "AboutUs": "हमारे बारे में",
+    "AboutUs": "हमारे بارے में",
     "Support": "सहायता",
     "Settings": "सेटिंग्स",
     "LogOut": "लॉग आउट"
