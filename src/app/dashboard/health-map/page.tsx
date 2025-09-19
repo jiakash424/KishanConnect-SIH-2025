@@ -1,85 +1,145 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { Layers, Calendar as CalendarIcon, MapPin } from "lucide-react";
+import { generateSpectralMap, GenerateSpectralMapOutput } from "@/ai/flows/generate-spectral-map";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { UploadCloud, Layers, AlertCircle, Sparkles } from "lucide-react";
 
 export default function HealthMapPage() {
-  const healthMapImage = PlaceHolderImages.find((p) => p.id === "health-map");
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [result, setResult] = useState<GenerateSpectralMapOutput | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setResult(null);
+      setError(null);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(selectedFile);
+    }
+  };
+
+  const handleGenerateMap = async () => {
+    if (!file || !preview) return;
+    setLoading(true);
+    setResult(null);
+    setError(null);
+
+    try {
+      const mapResult = await generateSpectralMap({ farmImageUri: preview });
+      setResult(mapResult);
+    } catch (err) {
+      setError("An error occurred while generating the map. Please try again.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          Interactive Spectral Health Map
+          Spectral Health Map Generation
         </h1>
         <p className="text-muted-foreground">
-          Visualize crop health, soil conditions, and risk zones.
+          Upload a satellite or drone image of your field to generate an AI-powered health map.
         </p>
       </div>
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle>Field Analysis</CardTitle>
-            <div className="flex gap-2">
-              <Select defaultValue="ndvi">
-                <SelectTrigger className="w-[180px]">
-                  <Layers className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Select a layer" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ndvi">NDVI</SelectItem>
-                  <SelectItem value="ndre">NDRE</SelectItem>
-                  <SelectItem value="soil">Soil Moisture</SelectItem>
-                  <SelectItem value="risk">Risk Zones</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select defaultValue="field-a">
-                <SelectTrigger className="w-[180px]">
-                  <MapPin className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Select a field" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="field-a">Field A</SelectItem>
-                  <SelectItem value="field-b">Field B</SelectItem>
-                  <SelectItem value="field-c">Field C</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button variant="outline" className="w-[180px] justify-start text-left font-normal">
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                <span>June 1, 2024 - June 30, 2024</span>
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {healthMapImage && (
-            <div className="w-full aspect-video rounded-lg overflow-hidden border">
-              <Image
-                src={healthMapImage.imageUrl}
-                alt={healthMapImage.description}
-                width={1200}
-                height={800}
-                className="w-full h-full object-cover"
-                data-ai-hint={healthMapImage.imageHint}
-              />
-            </div>
+      
+      <div className="grid lg:grid-cols-2 gap-8 items-start">
+        <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle>Upload Farm Image</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-grow flex flex-col items-center justify-center gap-4">
+            <label htmlFor="farm-image-upload" className="w-full h-64 border-2 border-dashed rounded-lg cursor-pointer flex flex-col items-center justify-center hover:bg-muted/50 transition-colors">
+              {preview ? (
+                <Image src={preview} alt="Farm preview" width={300} height={300} className="max-h-full w-auto object-contain rounded-md" />
+              ) : (
+                <div className="text-center">
+                  <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <p className="mt-2 text-sm text-muted-foreground">Click to upload or drag and drop</p>
+                  <p className="text-xs text-muted-foreground">PNG, JPG, or WEBP</p>
+                </div>
+              )}
+              <input id="farm-image-upload" type="file" className="sr-only" accept="image/png, image/jpeg, image/webp" onChange={handleFileChange} />
+            </label>
+            <Button onClick={handleGenerateMap} disabled={!file || loading} className="w-full">
+              {loading ? "Generating Map..." : "Generate Health Map"}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <div className="space-y-6">
+          {loading && (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Generating Analysis...</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        <Skeleton className="h-48 w-full" />
+                        <Skeleton className="h-20 w-full" />
+                    </div>
+                </CardContent>
+            </Card>
           )}
-        </CardContent>
-      </Card>
+
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {result && (
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><Layers />Generated Health Map</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <h3 className="font-semibold mb-2 text-sm text-center">Original Image</h3>
+                            <div className="w-full aspect-square rounded-lg overflow-hidden border">
+                                <Image src={preview!} alt="Original farm" width={400} height={400} className="w-full h-full object-cover" />
+                            </div>
+                        </div>
+                        <div>
+                            <h3 className="font-semibold mb-2 text-sm text-center">Spectral Map</h3>
+                            <div className="w-full aspect-square rounded-lg overflow-hidden border">
+                                <Image src={result.spectralMapUri} alt="Generated spectral map" width={400} height={400} className="w-full h-full object-cover" />
+                            </div>
+                        </div>
+                    </div>
+                     <div>
+                        <h3 className="font-semibold flex items-center gap-2 mb-2"><Sparkles size={20} />AI Analysis</h3>
+                        <p className="text-sm text-muted-foreground p-4 bg-muted/50 rounded-lg">{result.analysis}</p>
+                    </div>
+                </CardContent>
+            </Card>
+          )}
+
+          {!result && !loading && !error && (
+             <div className="flex h-full min-h-[400px] items-center justify-center rounded-lg border-2 border-dashed">
+                <p className="text-muted-foreground text-center">Your generated health map and analysis will appear here.</p>
+             </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
