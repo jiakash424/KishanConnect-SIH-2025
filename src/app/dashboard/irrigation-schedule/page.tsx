@@ -2,13 +2,13 @@
 
 import { useState, useCallback } from "react";
 import { getIrrigationSchedule, IrrigationScheduleOutput } from "@/ai/flows/irrigation-schedule";
-import { getWeather, GetWeatherForecastOutput } from "@/ai/flows/get-weather-forecast";
+import { getWeather } from "@/ai/flows/get-weather-forecast";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Droplets, AlertCircle, Calendar, CloudRain, Thermometer, ShieldCheck } from "lucide-react";
+import { Droplets, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -32,9 +32,9 @@ export default function IrrigationPage() {
     setError(null);
 
     try {
-      const weatherForecast = await getWeather({ location });
-      if (weatherForecast) {
-        const weatherSummary = weatherForecast.map(day => 
+      const weatherData = await getWeather({ location });
+      if (weatherData) {
+        const weatherSummary = weatherData.daily.map(day => 
           `${day.day}: ${day.condition}, Temp ${day.temp_min}°C-${day.temp_max}°C`
         ).join('; ');
         
@@ -100,7 +100,7 @@ export default function IrrigationPage() {
           {loading && (
             <div className="space-y-4">
               <Skeleton className="h-24 w-full" />
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4">
                 {Array.from({length: 7}).map((_, i) => <Skeleton key={i} className="h-40 w-full" />)}
               </div>
             </div>

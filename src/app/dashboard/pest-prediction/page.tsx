@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getWeather, GetWeatherForecastOutput } from "@/ai/flows/get-weather-forecast";
+import { getWeather } from "@/ai/flows/get-weather-forecast";
 import { getPestPrediction, GetPestPredictionOutput } from "@/ai/flows/get-pest-prediction";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Bug, AlertCircle, ShieldAlert, Thermometer, Wind, Droplets } from "lucide-react";
+import { Bug, AlertCircle, ShieldAlert } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,7 +17,6 @@ import { Badge } from "@/components/ui/badge";
 export default function PestPredictionPage() {
   const [location, setLocation] = useState("Delhi, India");
   const [cropType, setCropType] = useState("Wheat");
-  const [weather, setWeather] = useState<GetWeatherForecastOutput | null>(null);
   const [prediction, setPrediction] = useState<GetPestPredictionOutput | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,11 +33,10 @@ export default function PestPredictionPage() {
     try {
       // 1. Fetch weather
       const weatherForecast = await getWeather({ location });
-      setWeather(weatherForecast);
 
       if (weatherForecast) {
         // 2. Format weather for prediction flow
-        const weatherSummary = weatherForecast.map(day => 
+        const weatherSummary = weatherForecast.daily.map(day => 
           `${day.day}: ${day.condition}, Temp ${day.temp_min}°C-${day.temp_max}°C`
         ).join('; ');
         
@@ -151,7 +149,10 @@ export default function PestPredictionPage() {
 
           {!prediction && !loading && !error && (
              <div className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
-                <p className="text-muted-foreground">Risk predictions will appear here.</p>
+                <div className="text-center">
+                    <Bug className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <p className="mt-4 text-muted-foreground">Risk predictions will appear here.</p>
+                </div>
              </div>
           )}
         </div>
