@@ -99,7 +99,7 @@ function WeatherCard() {
     } finally {
       setLoadingWeather(false);
     }
-  }, [weather]);
+  }, []);
 
   useEffect(() => {
     if (navigator.geolocation) {
