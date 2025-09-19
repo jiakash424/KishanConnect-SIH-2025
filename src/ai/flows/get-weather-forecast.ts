@@ -28,16 +28,16 @@ const GetWeatherForecastOutputSchema = z.array(WeatherForecastSchema);
 
 export type GetWeatherForecastOutput = z.infer<typeof GetWeatherForecastOutputSchema>;
 
-function mapWeatherIcon(icon: string): 'Sun' | 'CloudSun' | 'Cloudy' | 'CloudRain' | 'Wind' {
-    if (icon.startsWith('01')) return 'Sun'; // clear sky
-    if (icon.startsWith('02')) return 'CloudSun'; // few clouds
-    if (icon.startsWith('03') || icon.startsWith('04')) return 'Cloudy'; // scattered/broken clouds
-    if (icon.startsWith('09') || icon.startsWith('10')) return 'CloudRain'; // shower rain/rain
-    if (icon.startsWith('11')) return 'CloudRain'; // thunderstorm
-    if (icon.startsWith('13')) return 'Cloudy'; // snow
-    if (icon.startsWith('50')) return 'Wind'; // mist
+function mapWeatherIcon(iconUrl: string): 'Sun' | 'CloudSun' | 'Cloudy' | 'CloudRain' | 'Wind' {
+    const code = iconUrl.split('/').pop()?.replace('.png', '');
+    if (code === '1000') return 'Sun';
+    if (code === '1003') return 'CloudSun';
+    if (['1006', '1009', '1030', '1135', '1147'].includes(code!)) return 'Cloudy'; // Cloudy, Overcast, Mist, Fog
+    if (['1063', '1087', '1150', '1153', '1180', '1183', '1186', '1189', '1192', '1195', '1198', '1201', '1240', '1243', '1246', '1273', '1276'].includes(code!)) return 'CloudRain'; // Rain related
+    if (['1066', '1069', '1072', '1114', '1117', '1168', '1171', '1204', '1207', '1210', '1213', '1216', '1219', '1222', '1225', '1237', '1249', '1252', '1255', '1258', '1261', '1264', '1279', '1282'].includes(code!)) return 'Cloudy'; // Snow/Sleet related, mapped to cloudy for simplicity
     return 'Sun';
 }
+
 
 const getWeatherForecast = ai.defineTool(
     {
@@ -47,9 +47,9 @@ const getWeatherForecast = ai.defineTool(
       outputSchema: GetWeatherForecastOutputSchema,
     },
     async (input) => {
-        const apiKey = process.env.OPENWEATHER_API_KEY;
-        if (!apiKey || apiKey === "YOUR_API_KEY") {
-            console.log("OpenWeatherMap API key not found. Returning mock data.");
+        const apiKey = process.env.WEATHERAPI_KEY;
+        if (!apiKey) {
+            console.log("WeatherAPI.com API key not found. Returning mock data.");
             // Return mock data if API key is not set
             return [
                 { day: 'Today', temp: 37, condition: 'Rainy - Cloudy', icon: 'CloudRain', temp_max: 37, temp_min: 23, full_description: 'Rainy - Cloudy' },
@@ -61,75 +61,38 @@ const getWeatherForecast = ai.defineTool(
         }
 
         try {
-            // 1. Get coordinates for the location
-            const geoResponse = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${input.location}&limit=1&appid=${apiKey}`);
-            if (!geoResponse.ok) throw new Error('Failed to fetch coordinates for location.');
-            const geoData = await geoResponse.json();
-            if (geoData.length === 0) throw new Error('Location not found.');
-            const { lat, lon } = geoData[0];
-
-            // 2. Get the 5-day forecast
-            const forecastResponse = await fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
+            const forecastResponse = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${input.location}&days=5&aqi=no&alerts=no`);
             if (!forecastResponse.ok) throw new Error('Failed to fetch weather forecast.');
             const forecastData = await forecastResponse.json();
             
-            const dailyForecasts: { [key: string]: any } = {};
-
-            forecastData.list.forEach((item: any) => {
-                const date = item.dt_txt.split(' ')[0];
-                if (!dailyForecasts[date]) {
-                    dailyForecasts[date] = {
-                        temps: [],
-                        conditions: {},
-                        icons: {},
-                        temp_max: -Infinity,
-                        temp_min: Infinity,
-                    };
-                }
-                dailyForecasts[date].temps.push(item.main.temp);
-                dailyForecasts[date].temp_max = Math.max(dailyForecasts[date].temp_max, item.main.temp_max);
-                dailyForecasts[date].temp_min = Math.min(dailyForecasts[date].temp_min, item.main.temp_min);
-                
-                const condition = item.weather[0].description;
-                const icon = item.weather[0].icon;
-                dailyForecasts[date].conditions[condition] = (dailyForecasts[date].conditions[condition] || 0) + 1;
-                dailyForecasts[date].icons[icon] = (dailyForecasts[date].icons[icon] || 0) + 1;
-            });
-
-            const processedForecast = Object.keys(dailyForecasts).slice(0, 5).map((date, index) => {
-                const dayData = dailyForecasts[date];
-                const avgTemp = dayData.temps.reduce((a: number, b: number) => a + b, 0) / dayData.temps.length;
-                
-                const mainCondition = Object.keys(dayData.conditions).reduce((a, b) => dayData.conditions[a] > dayData.conditions[b] ? a : b);
-                const mainIcon = Object.keys(dayData.icons).reduce((a, b) => dayData.icons[a] > dayData.icons[b] ? a : b);
-
-                const today = new Date();
+            const processedForecast = forecastData.forecast.forecastday.map((item: any, index: number) => {
+                 const today = new Date();
                 today.setHours(0,0,0,0);
-                const forecastDate = new Date(date);
+                const forecastDate = new Date(item.date);
                 forecastDate.setHours(0,0,0,0);
                 
                 let dayLabel = forecastDate.toLocaleDateString('en-US', { weekday: 'long' });
-                if (today.getTime() === forecastDate.getTime()) {
+                if (index === 0) {
                     dayLabel = 'Today';
-                } else if (forecastDate.getTime() === new Date(today.getTime() + 86400000).getTime()) {
+                } else if (index === 1) {
                     dayLabel = 'Tomorrow';
                 }
 
                 return {
                     day: dayLabel,
-                    temp: Math.round(avgTemp),
-                    condition: mainCondition.charAt(0).toUpperCase() + mainCondition.slice(1),
-                    icon: mapWeatherIcon(mainIcon),
-                    temp_max: Math.round(dayData.temp_max),
-                    temp_min: Math.round(dayData.temp_min),
-                    full_description: `Avg. ${Math.round(avgTemp)}°C, ${mainCondition}. High ${Math.round(dayData.temp_max)}°C, Low ${Math.round(dayData.temp_min)}°C.`
+                    temp: Math.round(item.day.avgtemp_c),
+                    condition: item.day.condition.text,
+                    icon: mapWeatherIcon(item.day.condition.icon),
+                    temp_max: Math.round(item.day.maxtemp_c),
+                    temp_min: Math.round(item.day.mintemp_c),
+                    full_description: `Avg. ${Math.round(item.day.avgtemp_c)}°C, ${item.day.condition.text}. High ${Math.round(item.day.maxtemp_c)}°C, Low ${Math.round(item.day.mintemp_c)}°C.`
                 };
             });
-
+            
             return processedForecast;
 
         } catch (error) {
-            console.error("Error fetching real weather data:", error);
+            console.error("Error fetching real weather data from WeatherAPI.com:", error);
             // Fallback to mock data on error
              return [
                 { day: 'Today', temp: 37, condition: 'Rainy - Cloudy', icon: 'CloudRain', temp_max: 37, temp_min: 23, full_description: 'Rainy - Cloudy' },

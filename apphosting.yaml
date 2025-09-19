@@ -8,3 +8,4 @@ runConfig:
 secretEnv:
   - secret: GEMINI_API_KEY
   - secret: OPENWEATHER_API_KEY
+  - secret: WEATHERAPI_KEY
