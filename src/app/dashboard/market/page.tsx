@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-const crops = ["Wheat", "Rice", "Maize"];
+const crops = ["Wheat", "Rice", "Maize", "Cotton", "Sugarcane", "Soybean", "Potato"];
 
 export default function MarketPage() {
   const [selectedCrop, setSelectedCrop] = useState("Wheat");
