@@ -92,33 +92,13 @@ function WeatherCard() {
     } catch (error) {
       console.error('Failed to fetch weather:', error);
       setLocationError("Could not fetch weather data. Showing default.");
-      // Fallback to default if API fails
-      if (!weather) {
-        const defaultWeatherData = await getWeather({ location: 'Delhi' });
-        setWeather(defaultWeatherData);
-      }
     } finally {
       setLoadingWeather(false);
     }
   }, []);
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          fetchWeather(`${latitude},${longitude}`);
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-          setLocationError("Location access denied. Showing weather for Delhi.");
-          fetchWeather('Delhi');
-        }
-      );
-    } else {
-      setLocationError("Geolocation not supported. Showing weather for Delhi.");
-      fetchWeather('Delhi');
-    }
+    fetchWeather('Delhi');
   }, [fetchWeather]);
 
   if (loadingWeather || !weather) {
@@ -437,3 +417,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
