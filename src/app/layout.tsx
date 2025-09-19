@@ -8,7 +8,7 @@ import { AuthProvider } from '@/components/auth/auth-provider';
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: 'KrishiConnect',
+  title: 'KishanConnect',
   description: 'AI-Powered Crop Health Analysis',
 };
 

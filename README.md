@@ -9,10 +9,10 @@ Agriculture faces growing threats from soil degradation, unpredictable weather, 
 
 ---
 
-## Project Title: KrishiConnect – AI-Powered Crop Health & Risk Monitoring Platform
+## Project Title: KishanConnect – AI-Powered Crop Health & Risk Monitoring Platform
 
 ### Solution Overview
-KrishiConnect is a unified software platform that leverages AI, remote sensing, and sensor data to deliver timely, field-level insights on crop health, soil conditions, and pest risks. It addresses the need for precision agriculture by automating diagnostics, contextual recommendations, and actionable alerts for farmers.
+KishanConnect is a unified software platform that leverages AI, remote sensing, and sensor data to deliver timely, field-level insights on crop health, soil conditions, and pest risks. It addresses the need for precision agriculture by automating diagnostics, contextual recommendations, and actionable alerts for farmers.
 
 ### Key Technologies & Tools Used
 - Next.js (React): Modern web framework for building scalable, interactive dashboards.
@@ -69,7 +69,7 @@ KrishiConnect is a unified software platform that leverages AI, remote sensing, 
 
 ---
 
-**KrishiConnect** directly addresses SIH25099 by integrating AI, remote sensing, and sensor data for precision crop monitoring, delivering a scalable, farmer-centric solution for India’s agricultural challenges.
+**KishanConnect** directly addresses SIH25099 by integrating AI, remote sensing, and sensor data for precision crop monitoring, delivering a scalable, farmer-centric solution for India’s agricultural challenges.
 
 ---
 
