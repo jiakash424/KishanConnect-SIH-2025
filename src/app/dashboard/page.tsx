@@ -81,6 +81,7 @@ function WeatherCard() {
   const [loadingWeather, setLoadingWeather] = useState(true);
   const [tempUnit, setTempUnit] = useState<'C' | 'F'>('C');
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
 
   const fetchWeather = useCallback(async (location: string) => {
@@ -101,8 +102,8 @@ function WeatherCard() {
     }
   }, []);
 
-  useEffect(() => {
-    if (navigator.geolocation) {
+  const fetchUserLocationAndWeather = useCallback(() => {
+     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -110,21 +111,32 @@ function WeatherCard() {
         },
         (error) => {
           console.error("Error getting location: ", error);
-          setLocationError("Could not get your location. Showing weather for default location.");
+          setLocationError("Could not get your location. Showing default.");
           fetchWeather('Delhi'); // Fallback to a default location
         }
       );
     } else {
-      setLocationError("Geolocation is not supported by this browser. Showing weather for default location.");
+      setLocationError("Geolocation is not supported. Showing default.");
       fetchWeather('Delhi'); // Fallback for browsers that don't support geolocation
     }
   }, [fetchWeather]);
+
+  useEffect(() => {
+    fetchUserLocationAndWeather();
+    const weatherInterval = setInterval(fetchUserLocationAndWeather, 600000); // Refresh weather every 10 minutes
+    const timeInterval = setInterval(() => setCurrentTime(new Date()), 1000); // Update time every second
+
+    return () => {
+      clearInterval(weatherInterval);
+      clearInterval(timeInterval);
+    };
+  }, [fetchUserLocationAndWeather]);
 
   if (loadingWeather || !weather) {
     return <Card className="lg:col-span-2"><CardContent className="p-4"><Skeleton className="h-96 w-full" /></CardContent></Card>
   }
   
-  const { location, currentTime, lastUpdated, current, daily, hourly } = weather;
+  const { location, lastUpdated, current, daily, hourly } = weather;
   const todayForecast = daily[0];
 
   const convertTemp = (celsius: number) => {
@@ -133,6 +145,8 @@ function WeatherCard() {
     }
     return celsius;
   }
+  
+  const formattedTime = currentTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
   return (
       <Card className="lg:col-span-2">
@@ -150,7 +164,7 @@ function WeatherCard() {
           )}
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="text-lg font-semibold">{location} {currentTime}</h3>
+              <h3 className="text-lg font-semibold">{location} {formattedTime}</h3>
               <p className="text-xs text-muted-foreground">{lastUpdated}</p>
             </div>
             <div className="flex items-center gap-1 rounded-full bg-muted p-1">
