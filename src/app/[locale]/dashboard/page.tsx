@@ -17,7 +17,8 @@ import {
   Sun,
   CloudSun,
   CloudRain,
-  ChevronRight
+  ChevronRight,
+  LocateFixed,
 } from 'lucide-react';
 import {
   Card,
@@ -41,6 +42,7 @@ import {
 import { Bar, BarChart, CartesianGrid, XAxis, AreaChart, Area } from 'recharts';
 import { cn } from '@/lib/utils';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const chartData = [
   { month: "January", yield: 186 },
@@ -78,25 +80,48 @@ function WeatherCard() {
   const [weather, setWeather] = useState<GetWeatherForecastOutput | null>(null);
   const [loadingWeather, setLoadingWeather] = useState(true);
   const [tempUnit, setTempUnit] = useState<'C' | 'F'>('C');
+  const [locationError, setLocationError] = useState<string | null>(null);
 
-  const fetchWeather = useCallback(async () => {
+  const fetchWeather = useCallback(async (location: string) => {
     setLoadingWeather(true);
+    setLocationError(null);
     try {
-      const weatherData = await getWeather({ location: 'Delhi' });
+      const weatherData = await getWeather({ location });
       setWeather(weatherData);
     } catch (error) {
       console.error('Failed to fetch weather:', error);
+      setLocationError("Could not fetch weather data. Showing default.");
+      // Fallback to default if API fails
+      if (!weather) {
+        const defaultWeatherData = await getWeather({ location: 'Delhi' });
+        setWeather(defaultWeatherData);
+      }
     } finally {
       setLoadingWeather(false);
     }
-  }, []);
+  }, [weather]);
 
   useEffect(() => {
-    fetchWeather();
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          fetchWeather(`${latitude},${longitude}`);
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          setLocationError("Location access denied. Showing weather for Delhi.");
+          fetchWeather('Delhi');
+        }
+      );
+    } else {
+      setLocationError("Geolocation not supported. Showing weather for Delhi.");
+      fetchWeather('Delhi');
+    }
   }, [fetchWeather]);
 
   if (loadingWeather || !weather) {
-    return <Card className="lg:col-span-2"><CardContent><Skeleton className="h-96 w-full" /></CardContent></Card>
+    return <Card className="lg:col-span-2"><CardContent className="p-4"><Skeleton className="h-96 w-full" /></CardContent></Card>
   }
   
   const { location, currentTime, lastUpdated, current, daily, hourly } = weather;
@@ -112,6 +137,14 @@ function WeatherCard() {
   return (
       <Card className="lg:col-span-2">
         <CardContent className="p-4">
+          {locationError && (
+             <Alert variant="default" className="mb-2 text-xs bg-muted/80">
+                <LocateFixed className="h-4 w-4" />
+                <AlertDescription>
+                  {locationError}
+                </AlertDescription>
+              </Alert>
+          )}
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-lg font-semibold">{location} {currentTime}</h3>
