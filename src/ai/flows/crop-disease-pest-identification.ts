@@ -24,6 +24,7 @@ const TreatmentSchema = z.object({
 
 const CropDiseasePestIdentificationOutputSchema = z.object({
   identification: z.object({
+    plantName: z.string().describe('The common name of the identified plant/crop.'),
     diseaseOrPest: z.string().describe('The identified disease or pest.'),
     confidence: z
       .number()
@@ -48,15 +49,15 @@ const prompt = ai.definePrompt({
   name: 'cropDiseasePestIdentificationPrompt',
   input: {schema: CropDiseasePestIdentificationInputSchema},
   output: {schema: CropDiseasePestIdentificationOutputSchema},
-  prompt: `You are an expert in plant pathology and entomology.
-  Your task is to identify potential plant diseases and pests from the image provided.
+  prompt: `You are an expert in plant pathology and botany.
+  Your task is to first identify the plant/crop in the image and then identify potential diseases and pests affecting it.
   Based on your identification, provide detailed treatment guidance, including both organic and chemical options. For each treatment, include the name, description, and an estimated cost.
   Also, suggest a list of preventative measures.
   
   Use the following as the primary source of information about the plant.
   Photo: {{media url=photoDataUri}}
 
-  Please return the identification, confidence score, detailed treatment options (organic and chemical), and preventative measures.
+  Please return the plant name, the identified disease/pest, confidence score, detailed treatment options (organic and chemical), and preventative measures.
   `,
 });
 

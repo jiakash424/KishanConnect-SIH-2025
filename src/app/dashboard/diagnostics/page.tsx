@@ -119,8 +119,11 @@ export default function DiagnosticsPage() {
                   <CardTitle className="flex items-center gap-2"><Leaf/>Identification</CardTitle>
                   <CardDescription>Confidence: {Math.round(result.identification.confidence * 100)}%</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-xl font-semibold">{result.identification.diseaseOrPest}</p>
+                <CardContent className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Plant/Crop</p>
+                  <p className="text-lg font-semibold">{result.identification.plantName}</p>
+                  <p className="text-sm text-muted-foreground pt-2">Identified Problem</p>
+                  <p className="text-lg font-semibold">{result.identification.diseaseOrPest}</p>
                 </CardContent>
               </Card>
 
