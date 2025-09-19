@@ -29,25 +29,23 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useTranslations } from 'next-intl';
 
 export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const t = useTranslations('Sidebar');
 
   const menuItems = [
-    { href: "/dashboard", icon: LayoutDashboard, label: t("Dashboard") },
-    { href: "/dashboard/analysis", icon: Tractor, label: t("Analytics") },
-    { href: "/dashboard/diagnostics", icon: Sprout, label: t("Diagnostics") },
-    { href: "/dashboard/soil-analysis", icon: FlaskConical, label: t("SoilAnalysis") },
-    { href: "/dashboard/pest-prediction", icon: Bug, label: t("PestPrediction") },
-    { href: "/dashboard/health-map", icon: Map, label: t("HealthMap") },
-    { href: "/dashboard/market", icon: Landmark, label: t("Market") },
-    { href: "/dashboard/crop-advisor", icon: Lightbulb, label: t("CropAdvisor") },
-    { href: "/dashboard/irrigation-schedule", icon: Droplets, label: t("Irrigation") },
-    { href: "/dashboard/weed-identification", icon: Flower, label: t("WeedID") },
-    { href: "/dashboard/voice-assistant", icon: Bot, label: t("Assistant") },
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard/analysis", label: "Analytics", icon: Tractor },
+    { href: "/dashboard/diagnostics", label: "Diagnostics", icon: Sprout },
+    { href: "/dashboard/soil-analysis", label: "Soil Analysis", icon: FlaskConical },
+    { href: "/dashboard/pest-prediction", label: "Pest Prediction", icon: Bug },
+    { href: "/dashboard/health-map", label: "Health Map", icon: Map },
+    { href: "/dashboard/market", label: "Market", icon: Landmark },
+    { href: "/dashboard/crop-advisor", label: "Crop Advisor", icon: Lightbulb },
+    { href: "/dashboard/irrigation-schedule", label: "Irrigation", icon: Droplets },
+    { href: "/dashboard/weed-identification", label: "Weed ID", icon: Flower },
+    { href: "/dashboard/voice-assistant", label: "Assistant", icon: Bot },
   ];
   
   const handleLogout = () => {
@@ -55,12 +53,10 @@ export function AppSidebar() {
   };
 
   const bottomMenuItems = [
-      { href: "/dashboard/about", icon: Info, label: t("AboutUs") },
-      { href: "/dashboard/support", icon: LifeBuoy, label: t("Support") },
-      { href: "/dashboard/settings", icon: Settings, label: t("Settings") },
+      { href: "/dashboard/about", label: "About Us", icon: Info },
+      { href: "/dashboard/support", label: "Support", icon: LifeBuoy },
+      { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ]
-  
-  const locale = pathname.split('/')[1];
 
   return (
     <Sidebar collapsible="icon" className="bg-card border-r">
@@ -73,7 +69,7 @@ export function AppSidebar() {
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
-                isActive={pathname === `/${locale}${item.href}` || (item.href !== "/dashboard" && pathname.startsWith(`/${locale}${item.href}`)) }
+                isActive={pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))}
                 className="justify-start"
                 variant="ghost"
                 tooltip={item.label}
@@ -92,7 +88,7 @@ export function AppSidebar() {
           {bottomMenuItems.map((item) => (
              <SidebarMenuItem key={item.label}>
               <SidebarMenuButton
-                isActive={pathname.startsWith(`/${locale}${item.href}`)}
+                isActive={pathname.startsWith(item.href)}
                 className="justify-start"
                 variant="ghost"
                 tooltip={item.label}
@@ -110,10 +106,10 @@ export function AppSidebar() {
                     onClick={handleLogout}
                     className="justify-start"
                     variant="ghost"
-                    tooltip={t('LogOut')}
+                    tooltip="Log Out"
                 >
                     <LogOut className="h-5 w-5" />
-                    <span>{t('LogOut')}</span>
+                    <span>Log Out</span>
                 </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>

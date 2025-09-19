@@ -82,6 +82,7 @@ function WeatherCard() {
   const [tempUnit, setTempUnit] = useState<'C' | 'F'>('C');
   const [locationError, setLocationError] = useState<string | null>(null);
 
+
   const fetchWeather = useCallback(async (location: string) => {
     setLoadingWeather(true);
     setLocationError(null);
@@ -136,7 +137,10 @@ function WeatherCard() {
 
   return (
       <Card className="lg:col-span-2">
-        <CardContent className="p-4">
+         <CardHeader>
+            <CardTitle>Weather</CardTitle>
+          </CardHeader>
+        <CardContent className="p-4 pt-0">
           {locationError && (
              <Alert variant="default" className="mb-2 text-xs bg-muted/80">
                 <LocateFixed className="h-4 w-4" />
@@ -235,7 +239,6 @@ function WeatherCard() {
 export default function DashboardPage() {
   const [marketPrices, setMarketPrices] = useState<GetMarketPriceOutput | null>(null);
   const [loadingPrices, setLoadingPrices] = useState(true);
-
 
   const fetchMarketPrices = useCallback(async () => {
     setLoadingPrices(true);
@@ -353,25 +356,25 @@ export default function DashboardPage() {
             <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/diagnostics">
                     <Sprout className="h-6 w-6" />
-                    <span>Diagnose Crop</span>
+                    <span>Diagnostics</span>
                 </Link>
             </Button>
             <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/soil-analysis">
                     <Activity className="h-6 w-6" />
-                    <span>Analyze Soil</span>
+                    <span>Soil Analysis</span>
                 </Link>
             </Button>
              <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/pest-prediction">
                     <AlertTriangle className="h-6 w-6" />
-                    <span>Predict Pests</span>
+                    <span>Pest Prediction</span>
                 </Link>
             </Button>
              <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/market">
                     <IndianRupee className="h-6 w-6" />
-                    <span>Check Market</span>
+                    <span>Market</span>
                 </Link>
             </Button>
             <Button asChild variant="outline" className="h-20 flex-col gap-1">
@@ -383,19 +386,19 @@ export default function DashboardPage() {
              <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/irrigation-schedule">
                     <Droplets className="h-6 w-6" />
-                    <span>Irrigation Plan</span>
+                    <span>Irrigation</span>
                 </Link>
             </Button>
              <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/weed-identification">
                     <Flower className="h-6 w-6" />
-                    <span>Identify Weed</span>
+                    <span>Weed ID</span>
                 </Link>
             </Button>
              <Button asChild variant="outline" className="h-20 flex-col gap-1">
                 <Link href="/dashboard/voice-assistant">
                     <Bot className="h-6 w-6" />
-                    <span>AI Assistant</span>
+                    <span>Assistant</span>
                 </Link>
             </Button>
           </CardContent>

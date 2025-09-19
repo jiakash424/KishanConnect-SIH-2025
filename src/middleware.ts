@@ -1,15 +1,26 @@
-import createMiddleware from 'next-intl/middleware';
-import {locales, defaultLocale} from '../i18n';
+import { NextResponse, type NextRequest } from 'next/server'
  
-export default createMiddleware({
-  // A list of all locales that are supported
-  locales,
- 
-  // Used when no locale matches
-  defaultLocale,
-});
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname.startsWith('/static')) {
+    return NextResponse.next()
+  }
+
+  // If you want to add authentication checks, you can do it here.
+  // For now, we are just allowing all requests through.
+  
+  return NextResponse.next()
+}
  
 export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(hi|en|bn|te|ta|mr|pa)/:path*']
-};
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
+}
