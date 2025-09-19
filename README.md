@@ -35,6 +35,7 @@ KishanConnect is a unified software platform that leverages AI, remote sensing, 
 - **Interactive Spectral Health Maps:** Visualizes crop health, soil summaries, and risk zones from drone/satellite imagery.
 - **Pest & Disease Risk Prediction:** Forecasts pest/disease risks based on local weather forecasts.
 - **AI Voice Assistant:** Natural language Q&A for crop health, weather, and recommended actions, with text-to-speech output.
+- **Prompt-Assisted Initial Setup:** AI-powered onboarding to recommend data sources and configurations.
 
 ### How the Solution Works
 1.  **Data Collection:** Farmers upload images (plants, soil, drone imagery) and provide details like location and crop type.
@@ -59,7 +60,7 @@ KishanConnect is a unified software platform that leverages AI, remote sensing, 
 | Component | Technology/Module Used | Purpose |
 |---|---|---|
 | Frontend | Next.js, Tailwind CSS, Recharts | Dashboard, charts, maps, UI |
-| AI Flows | Genkit, Zod, Custom TS modules | Diagnosis, contextualization, crop advice, irrigation |
+| AI Flows | Genkit, Zod, Custom TS modules | Diagnosis, contextualization, crop advice, irrigation, onboarding |
 | Voice Assistant | Genkit, Custom AI flow, TTS | Natural language Q&A with audio feedback |
 | Data Visualization | Recharts, Custom UI components | Trends, health maps, risk zones |
 | Authentication | Firebase Auth (emulated) | Secure user access |
@@ -107,7 +108,7 @@ KishanConnect is a unified software platform that leverages AI, remote sensing, 
 - Name: Ankush Yadav
 - Roll No: 2300330100055
 - Branch & Sec: CSE / A
-- Phone: 805243476
+- Phone: 8052434076
 - Gmail: anyadav8052@gmail.com
 
 **Team Member 6:**
