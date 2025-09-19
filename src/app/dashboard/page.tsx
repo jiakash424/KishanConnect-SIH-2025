@@ -92,13 +92,32 @@ function WeatherCard() {
     } catch (error) {
       console.error('Failed to fetch weather:', error);
       setLocationError("Could not fetch weather data. Showing default.");
+       // Fetch for default location if user's location fails
+      if (location !== 'Delhi') {
+        fetchWeather('Delhi');
+      }
     } finally {
       setLoadingWeather(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchWeather('Delhi');
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          fetchWeather(`${latitude},${longitude}`);
+        },
+        (error) => {
+          console.error("Error getting location: ", error);
+          setLocationError("Could not get your location. Showing weather for default location.");
+          fetchWeather('Delhi'); // Fallback to a default location
+        }
+      );
+    } else {
+      setLocationError("Geolocation is not supported by this browser. Showing weather for default location.");
+      fetchWeather('Delhi'); // Fallback for browsers that don't support geolocation
+    }
   }, [fetchWeather]);
 
   if (loadingWeather || !weather) {
