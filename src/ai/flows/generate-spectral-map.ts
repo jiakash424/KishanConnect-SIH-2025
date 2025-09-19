@@ -10,7 +10,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const GenerateSpectralMapInputSchema = z.object({
+const GenerateSpectralMapInputSchema = z.object({
   farmImageUri: z
     .string()
     .describe(
@@ -19,7 +19,7 @@ export const GenerateSpectralMapInputSchema = z.object({
 });
 export type GenerateSpectralMapInput = z.infer<typeof GenerateSpectralMapInputSchema>;
 
-export const GenerateSpectralMapOutputSchema = z.object({
+const GenerateSpectralMapOutputSchema = z.object({
   spectralMapUri: z.string().describe('The generated spectral map image as a data URI.'),
   analysis: z.string().describe('A brief analysis of the spectral map, highlighting areas of concern.'),
 });
