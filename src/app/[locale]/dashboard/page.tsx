@@ -14,6 +14,10 @@ import {
   Wind,
   Lightbulb,
   Flower,
+  Sun,
+  CloudSun,
+  CloudRain,
+  ChevronRight
 } from 'lucide-react';
 import {
   Card,
@@ -22,7 +26,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import Link from 'next/link';
 import { GetWeatherForecastOutput, getWeather } from '@/ai/flows/get-weather-forecast';
 import { GetMarketPriceOutput, getMarketPrices } from '@/ai/flows/get-market-price';
@@ -34,7 +38,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, AreaChart, Area } from 'recharts';
+import { cn } from '@/lib/utils';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 const chartData = [
   { month: "January", yield: 186 },
@@ -52,11 +58,26 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export default function DashboardPage() {
+const weatherIconMap = {
+  Sun: <Sun className="h-full w-full" />,
+  CloudSun: <CloudSun className="h-full w-full" />,
+  Cloudy: <Cloudy className="h-full w-full" />,
+  CloudRain: <CloudRain className="h-full w-full" />,
+  Wind: <Wind className="h-full w-full" />,
+}
+
+const hourlyChartConfig = {
+  temperature: {
+    label: "Temp",
+    color: "hsl(var(--chart-1))",
+  },
+} satisfies ChartConfig;
+
+
+function WeatherCard() {
   const [weather, setWeather] = useState<GetWeatherForecastOutput | null>(null);
   const [loadingWeather, setLoadingWeather] = useState(true);
-  const [marketPrices, setMarketPrices] = useState<GetMarketPriceOutput | null>(null);
-  const [loadingPrices, setLoadingPrices] = useState(true);
+  const [tempUnit, setTempUnit] = useState<'C' | 'F'>('C');
 
   const fetchWeather = useCallback(async () => {
     setLoadingWeather(true);
@@ -69,6 +90,119 @@ export default function DashboardPage() {
       setLoadingWeather(false);
     }
   }, []);
+
+  useEffect(() => {
+    fetchWeather();
+  }, [fetchWeather]);
+
+  if (loadingWeather || !weather) {
+    return <Card className="lg:col-span-2"><CardContent><Skeleton className="h-96 w-full" /></CardContent></Card>
+  }
+  
+  const { location, currentTime, lastUpdated, current, daily, hourly } = weather;
+  const todayForecast = daily[0];
+
+  const convertTemp = (celsius: number) => {
+    if (tempUnit === 'F') {
+      return Math.round(celsius * 9/5 + 32);
+    }
+    return celsius;
+  }
+
+  return (
+      <Card className="lg:col-span-2">
+        <CardContent className="p-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="text-lg font-semibold">{location} {currentTime}</h3>
+              <p className="text-xs text-muted-foreground">{lastUpdated}</p>
+            </div>
+            <div className="flex items-center gap-1 rounded-full bg-muted p-1">
+              <Button onClick={() => setTempUnit('F')} size="sm" className={cn('h-6 w-10 rounded-full', tempUnit === 'F' ? 'bg-background shadow-sm' : 'bg-transparent text-muted-foreground hover:bg-muted/50')}>°F</Button>
+              <Button onClick={() => setTempUnit('C')} size="sm" className={cn('h-6 w-10 rounded-full', tempUnit === 'C' ? 'bg-background shadow-sm' : 'bg-transparent text-muted-foreground hover:bg-muted/50')}>°C</Button>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-6 my-4">
+            <div className="w-24 h-24 text-yellow-400">
+              {weatherIconMap[current.icon]}
+            </div>
+            <div>
+              <span className="text-7xl font-bold">{convertTemp(current.temp)}</span><span className="text-5xl align-top text-muted-foreground">°{tempUnit}</span>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-medium">{current.condition}</p>
+              <p className="text-muted-foreground">H {convertTemp(todayForecast.temp_max)}° L {convertTemp(todayForecast.temp_min)}°</p>
+            </div>
+          </div>
+          
+          <div className="mt-6">
+            <ScrollArea>
+              <div className="flex w-max space-x-2 pb-4">
+                {daily.map((day, index) => (
+                  <div key={index} className={cn("flex flex-col items-center gap-1 p-3 rounded-lg w-20", index === 0 ? "bg-muted border" : "")}>
+                    <p className="text-sm font-medium">{day.day}</p>
+                    <div className="w-8 h-8 text-yellow-400">{weatherIconMap[day.icon]}</div>
+                    <p className="text-sm">{convertTemp(day.temp_max)}° {convertTemp(day.temp_min)}°</p>
+                  </div>
+                ))}
+                <div className="flex items-center justify-center">
+                  <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+                    <ChevronRight />
+                  </Button>
+                </div>
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+          </div>
+          
+          <div className="h-40 w-full mt-4">
+            <ChartContainer config={hourlyChartConfig} className="h-full w-full">
+              <AreaChart data={hourly} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--color-temperature)" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="var(--color-temperature)" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                 <XAxis 
+                  dataKey="time"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tickFormatter={(value) => value.split(' ')[0] + value.split(' ')[1].substring(0,1)}
+                  className="text-xs"
+                />
+                 <ChartTooltip
+                    cursor={false}
+                    content={
+                      <ChartTooltipContent
+                        formatter={(value, name, props) => (
+                          <>
+                            <div className="font-bold text-center">{props.payload.time}</div>
+                            <div>{convertTemp(props.payload.temp)}°{tempUnit}</div>
+                            {props.payload.precip > 0 && <div className="text-blue-400">💧 {props.payload.precip}%</div>}
+                          </>
+                        )}
+                        hideLabel
+                        hideIndicator
+                      />
+                    }
+                  />
+                <Area type="monotone" dataKey="temp" stroke="var(--color-temperature)" fill="url(#colorUv)" />
+              </AreaChart>
+            </ChartContainer>
+          </div>
+        </CardContent>
+      </Card>
+  )
+}
+
+
+export default function DashboardPage() {
+  const [marketPrices, setMarketPrices] = useState<GetMarketPriceOutput | null>(null);
+  const [loadingPrices, setLoadingPrices] = useState(true);
+
 
   const fetchMarketPrices = useCallback(async () => {
     setLoadingPrices(true);
@@ -83,11 +217,9 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    fetchWeather();
     fetchMarketPrices();
-  }, [fetchWeather, fetchMarketPrices]);
+  }, [fetchMarketPrices]);
   
-  const currentWeather = weather?.[0];
 
   return (
     <div className="grid gap-6">
@@ -151,7 +283,8 @@ export default function DashboardPage() {
       </div>
 
        <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
+         <WeatherCard />
+         <Card>
            <CardHeader>
             <CardTitle>Yield Analytics</CardTitle>
             <CardDescription>Showing yield for the last 6 months.</CardDescription>
@@ -175,35 +308,6 @@ export default function DashboardPage() {
               </BarChart>
             </ChartContainer>
           </CardContent>
-        </Card>
-        <Card className="flex flex-col">
-          <CardHeader>
-            <CardTitle>Weather</CardTitle>
-            <CardDescription>{currentWeather?.full_description || "Loading weather..."}</CardDescription>
-          </CardHeader>
-          {loadingWeather || !currentWeather ? (
-            <CardContent className="space-y-4">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-            </CardContent>
-          ) : (
-             <CardContent className="flex flex-col flex-grow justify-between">
-                <div className="flex items-center justify-center text-6xl font-bold text-primary">
-                  {currentWeather.temp}°
-                  <Cloudy className="h-16 w-16 ml-4" />
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-sm mt-4">
-                  <div className="flex items-center gap-2"><Thermometer className="w-4 h-4 text-muted-foreground" /> <span>High: {currentWeather.temp_max}°</span></div>
-                  <div className="flex items-center gap-2"><Thermometer className="w-4 h-4 text-muted-foreground" /> <span>Low: {currentWeather.temp_min}°</span></div>
-                  <div className="flex items-center gap-2"><Wind className="w-4 h-4 text-muted-foreground" /> <span>Wind: 12 km/h</span></div>
-                  <div className="flex items-center gap-2"><Droplets className="w-4 h-4 text-muted-foreground" /> <span>Humidity: 78%</span></div>
-                  <div className="flex items-center gap-2"><Sunrise className="w-4 h-4 text-muted-foreground" /> <span>Sunrise: 05:45 AM</span></div>
-                  <div className="flex items-center gap-2"><Sunset className="w-4 h-4 text-muted-foreground" /> <span>Sunset: 07:15 PM</span></div>
-                </div>
-            </CardContent>
-          )}
         </Card>
       </div>
 
