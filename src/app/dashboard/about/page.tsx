@@ -65,7 +65,7 @@ export default function AboutPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">About KishanConnect</h1>
+        <h1 className="text-3xl font-bold tracking-tight">About KrishiConnect</h1>
         <p className="text-muted-foreground">
           Project and team information for Smart India Hackathon 2025.
         </p>
@@ -90,7 +90,7 @@ export default function AboutPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><Users /> Team Innovatrix</CardTitle>
-          <CardDescription>Meet the team behind KishanConnect.</CardDescription>
+          <CardDescription>Meet the team behind KrishiConnect.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {teamMembers.map((member) => (

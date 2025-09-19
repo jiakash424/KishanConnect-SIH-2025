@@ -40,7 +40,7 @@ export function LoginForm() {
   return (
     <>
     <div className="text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">KishanConnect</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">KrishiConnect</h1>
         <p className="text-sm text-muted-foreground">Enter your credentials to access your dashboard</p>
     </div>
     <form onSubmit={handleLogin} className="grid gap-4">
