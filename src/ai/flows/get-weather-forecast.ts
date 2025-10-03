@@ -2,11 +2,31 @@
 'use server';
 
 /**
- * @fileOverview A flow to get the real-time weather forecast using Visual Crossing API.
+ * @fileOverview A flow to get the real-time weather forecast using AccuWeather API.
+ *
+ * Note: AccuWeather's free/standard tiers typically provide a 5-day forecast. This
+ * flow requests the 5-day forecast and pads to 7 days by repeating the last day
+ * if necessary so the UI (which expects 7 days) continues to work.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+
+// Simple in-memory cache to reduce external weather API calls.
+// Cache is keyed by normalized location string and holds the full output payload.
+interface CacheEntry {
+    expires: number; // epoch ms
+    data: GetWeatherForecastOutput;
+}
+
+const weatherCache = new Map<string, CacheEntry>();
+
+function getCacheTTLSeconds(): number {
+    const env = process.env.WEATHER_CACHE_TTL_SECONDS;
+    const parsed = env ? parseInt(env, 10) : NaN;
+    if (!Number.isFinite(parsed) || parsed <= 0) return 600; // default 10 minutes
+    return parsed;
+}
 
 
 const WeatherForecastSchema = z.object({
@@ -51,12 +71,14 @@ const GetWeatherForecastOutputSchema = z.object({
 
 export type GetWeatherForecastOutput = z.infer<typeof GetWeatherForecastOutputSchema>;
 
-// Helper to map Visual Crossing icons to our app's icons
-const getIcon = (icon: string): 'Sun' | 'CloudSun' | 'Cloudy' | 'CloudRain' | 'Wind' => {
-    if (icon.includes('cloudy')) return 'Cloudy';
-    if (icon.includes('rain') || icon.includes('showers')) return 'CloudRain';
-    if (icon.includes('wind')) return 'Wind';
-    if (icon.includes('sun') || icon.includes('clear')) return 'Sun';
+// Helper to map AccuWeather icon phrases to our app's icons
+const getIcon = (phrase: string): 'Sun' | 'CloudSun' | 'Cloudy' | 'CloudRain' | 'Wind' => {
+    const p = (phrase || '').toLowerCase();
+    if (p.includes('cloud') && p.includes('sun')) return 'CloudSun';
+    if (p.includes('cloudy')) return 'Cloudy';
+    if (p.includes('rain') || p.includes('shower') || p.includes('thunder')) return 'CloudRain';
+    if (p.includes('wind')) return 'Wind';
+    if (p.includes('sun') || p.includes('clear') || p.includes('hot')) return 'Sun';
     return 'Sun'; // Default icon
 };
 
@@ -64,83 +86,125 @@ const getIcon = (icon: string): 'Sun' | 'CloudSun' | 'Cloudy' | 'CloudRain' | 'W
 const getWeatherForecast = ai.defineTool(
     {
       name: 'getWeatherForecast',
-      description: 'Returns a 7-day weather forecast for a given location using Visual Crossing API.',
+    description: 'Returns a 7-day weather forecast for a given location using AccuWeather API.',
       inputSchema: GetWeatherForecastInputSchema,
       outputSchema: GetWeatherForecastOutputSchema,
     },
     async (input) => {
-        const apiKey = process.env.VISUAL_CROSSING_API_KEY;
-        if (!apiKey) {
-            throw new Error("Visual Crossing API key is not set.");
+        // Check cache first
+        const cacheKey = input.location.trim().toLowerCase();
+        const nowMs = Date.now();
+        const cached = weatherCache.get(cacheKey);
+        if (cached && cached.expires > nowMs) {
+            return cached.data;
         }
 
-        const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${encodeURIComponent(input.location)}/next7days?unitGroup=metric&key=${apiKey}&contentType=json&include=days,hours,current`;
+        // Prefer ACCUWEATHER_API_KEY but keep old env var for compatibility
+        const apiKey = process.env.ACCUWEATHER_API_KEY || process.env.VISUAL_CROSSING_API_KEY;
+        if (!apiKey) {
+            throw new Error("AccuWeather API key is not set (ACCUWEATHER_API_KEY).");
+        }
 
         try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Weather API request failed with status: ${response.status}`);
-            }
-            const data = await response.json();
+            // 1) Resolve location to AccuWeather location key
+            const searchUrl = `http://dataservice.accuweather.com/locations/v1/cities/search?q=${encodeURIComponent(
+                input.location
+            )}&apikey=${apiKey}`;
 
-            if (!data.currentConditions || !data.days || !data.days[0].hours) {
-                throw new Error("Invalid data from weather API.");
+            const searchRes = await fetch(searchUrl);
+            if (!searchRes.ok) throw new Error(`Location search failed: ${searchRes.status}`);
+            const locations = await searchRes.json();
+            if (!Array.isArray(locations) || locations.length === 0) {
+                throw new Error('No location found for query.');
             }
 
-            const { currentConditions, days, resolvedAddress } = data;
+            const loc = locations[0];
+            const locationKey = loc.Key;
+            const resolvedAddress = `${loc.LocalizedName}${loc.AdministrativeArea?.ID ? ', ' + loc.AdministrativeArea.ID : ''}, ${loc.Country?.ID || ''}`;
+
+            // 2) Current conditions
+            const currentUrl = `http://dataservice.accuweather.com/currentconditions/v1/${locationKey}?apikey=${apiKey}&details=true`;
+            const currentRes = await fetch(currentUrl);
+            if (!currentRes.ok) throw new Error(`Current conditions request failed: ${currentRes.status}`);
+            const currentArr = await currentRes.json();
+            const current = Array.isArray(currentArr) && currentArr[0] ? currentArr[0] : null;
+
+            // 3) Daily forecast (5 day) - AccuWeather provides 5-day forecast commonly
+            const forecastUrl = `http://dataservice.accuweather.com/forecasts/v1/daily/5day/${locationKey}?apikey=${apiKey}&metric=true`;
+            const forecastRes = await fetch(forecastUrl);
+            if (!forecastRes.ok) throw new Error(`Forecast request failed: ${forecastRes.status}`);
+            const forecastData = await forecastRes.json();
+            const days = forecastData.DailyForecasts || [];
+
+            // Map daily forecasts and pad to 7 days if necessary
             const now = new Date();
-
-            const dailyForecasts = days.slice(0, 7).map((day: any) => {
-                const date = new Date(day.datetime);
+            const dailyForecasts = days.map((d: any) => {
+                const date = new Date(d.Date);
                 let dayLabel = date.toLocaleDateString('en-US', { weekday: 'short' });
-                 if (date.toDateString() === now.toDateString()) {
-                    dayLabel = 'Today';
-                } else {
-                     dayLabel = `${dayLabel} ${date.getDate()}`
-                }
+                if (date.toDateString() === now.toDateString()) dayLabel = 'Today';
+                else dayLabel = `${dayLabel} ${date.getDate()}`;
+
+                const tempMax = d.Temperature?.Maximum?.Value ?? 0;
+                const tempMin = d.Temperature?.Minimum?.Value ?? 0;
+
                 return {
                     day: dayLabel,
-                    temp: Math.round((day.tempmax + day.tempmin) / 2),
-                    condition: day.conditions,
-                    icon: getIcon(day.icon),
-                    temp_max: Math.round(day.tempmax),
-                    temp_min: Math.round(day.tempmin),
-                    full_description: day.description || day.conditions,
+                    temp: Math.round((tempMax + tempMin) / 2),
+                    condition: d.Day?.IconPhrase || d.Day?.LongPhrase || '',
+                    icon: getIcon(d.Day?.IconPhrase || ''),
+                    temp_max: Math.round(tempMax),
+                    temp_min: Math.round(tempMin),
+                    full_description: d.Day?.IconPhrase || d.Day?.LongPhrase || '',
                 };
             });
-            
-            // Find the current hour to start the hourly forecast from
-            const currentHour = now.getHours();
-            const todayHours = days[0].hours;
-            let startIndex = todayHours.findIndex((h:any) => parseInt(h.datetime.substring(0, 2), 10) === currentHour);
-            if (startIndex === -1) startIndex = 0;
 
-            const hourlyForecasts = todayHours.slice(startIndex, startIndex + 8).map((hour: any) => ({
-                 time: new Date(`1970-01-01T${hour.datetime}`).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true }),
-                 temp: Math.round(hour.temp),
-                 precip: hour.precipprob,
-            }));
+            while (dailyForecasts.length < 7) {
+                const last = dailyForecasts[dailyForecasts.length - 1];
+                if (!last) break;
+                // Duplicate last day to reach 7 days
+                dailyForecasts.push({ ...last, day: `+${dailyForecasts.length + 1}` });
+            }
 
-            return {
+            // 4) Hourly forecast (12 hour) and pick next 8 hours
+            const hourlyUrl = `http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/${locationKey}?apikey=${apiKey}&metric=true`;
+            const hourlyRes = await fetch(hourlyUrl);
+            const hourlyData = hourlyRes.ok ? await hourlyRes.json() : [];
+
+            const nowHour = new Date();
+            const hourlyForecasts = (Array.isArray(hourlyData) ? hourlyData : [])
+                .slice(0, 8)
+                .map((h: any) => ({
+                    time: new Date(h.DateTime).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true }),
+                    temp: Math.round(h.Temperature?.Value ?? 0),
+                    precip: h.PrecipitationProbability ?? 0,
+                }));
+
+            const result = {
                 location: resolvedAddress,
                 currentTime: now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
                 lastUpdated: `Updated just now`,
                 current: {
-                    temp: Math.round(currentConditions.temp),
-                    condition: currentConditions.conditions,
-                    icon: getIcon(currentConditions.icon),
-                    feelsLike: Math.round(currentConditions.feelslike),
-                    windSpeed: Math.round(currentConditions.windspeed),
-                    humidity: currentConditions.humidity,
+                    temp: Math.round(current?.Temperature?.Metric?.Value ?? 0),
+                    condition: current?.WeatherText || '',
+                    icon: getIcon(current?.WeatherText || ''),
+                    feelsLike: Math.round(current?.RealFeelTemperature?.Metric?.Value ?? current?.ApparentTemperature?.Metric?.Value ?? 0),
+                    windSpeed: Math.round(current?.Wind?.Speed?.Metric?.Value ?? 0),
+                    humidity: current?.RelativeHumidity ?? 0,
                 },
                 daily: dailyForecasts,
                 hourly: hourlyForecasts,
             };
 
+            // Store in cache
+            const ttl = getCacheTTLSeconds() * 1000;
+            weatherCache.set(cacheKey, { expires: Date.now() + ttl, data: result });
+
+            return result;
+
         } catch (error) {
-             console.error("Weather tool error:", error);
-             // Fallback to mock data on error
-            return {
+            console.error('Weather tool error (AccuWeather):', error);
+            // Fallback to mock data on error
+            const fallback = {
                 location: input.location,
                 currentTime: '09:37 AM',
                 lastUpdated: 'Updated a few minutes ago (mock data)',
@@ -165,7 +229,13 @@ const getWeatherForecast = ai.defineTool(
                     { time: '10 PM', temp: 30, precip: 2 }, { time: '1 AM', temp: 28, precip: 2 },
                     { time: '4 AM', temp: 27, precip: 1 }, { time: '7 AM', temp: 28, precip: 1 },
                 ]
-            }
+            };
+
+            // Cache fallback too, but with short TTL to avoid repeated failures
+            const ttlShort = Math.min(getCacheTTLSeconds(), 60) * 1000; // at most 60s
+            weatherCache.set(cacheKey, { expires: Date.now() + ttlShort, data: fallback });
+
+            return fallback;
         }
     }
 );

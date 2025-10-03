@@ -39,7 +39,8 @@ const getMarketPriceData = ai.defineTool(
         }
 
         const resource_id = '9ef84268-d588-465a-a308-a864a43d0070'; // Current Daily Price of Various Commodities
-        const url = `https://api.data.gov.in/resource/${resource_id}?api-key=${apiKey}&format=json&filters[commodity]=${encodeURIComponent(input.crop)}&limit=10`;
+  // Fetch more records and sort locally to ensure we return the most recent prices
+  const url = `https://api.data.gov.in/resource/${resource_id}?api-key=${apiKey}&format=json&filters[commodity]=${encodeURIComponent(input.crop)}&limit=50`;
 
         try {
             const response = await fetch(url);
@@ -53,21 +54,64 @@ const getMarketPriceData = ai.defineTool(
                 return [];
             }
 
-            // Map the API response to our schema
-            const prices = data.records.map((record: any) => {
-                // Convert DD-MM-YYYY to YYYY-MM-DD
-                const [day, month, year] = record.arrival_date.split('-');
-                const formattedDate = `${year}-${month}-${day}`;
+      // Map the API response to our schema with robust date parsing
+      const parsed = data.records.map((record: any) => {
+        const rawDate = record.arrival_date || record.date || record.updated_on || '';
 
-                return {
-                    crop: record.commodity,
-                    price: parseInt(record.modal_price, 10) || 0,
-                    location: `${record.market}, ${record.state}`,
-                    date: formattedDate,
-                };
-            });
+        // Normalize separators
+        const d = typeof rawDate === 'string' ? rawDate.trim().replace(/\//g, '-').split(' ')[0] : '';
 
-            return prices;
+        let isoDate = '';
+        try {
+          if (/^\d{2}-\d{2}-\d{4}$/.test(d)) {
+            // DD-MM-YYYY -> YYYY-MM-DD
+            const [dd, mm, yyyy] = d.split('-');
+            isoDate = `${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`;
+          } else if (/^\d{4}-\d{2}-\d{2}$/.test(d)) {
+            // Already YYYY-MM-DD
+            isoDate = d;
+          } else if (/^\d{2}-[A-Za-z]{3}-\d{4}$/.test(d)) {
+            // e.g. 10-Mar-2025 -> parse via Date
+            const parsedDate = new Date(d);
+            if (!isNaN(parsedDate.getTime())) {
+              isoDate = parsedDate.toISOString().split('T')[0];
+            }
+          } else if (d) {
+            // Try Date parse as a last resort
+            const parsedDate = new Date(d);
+            if (!isNaN(parsedDate.getTime())) {
+              isoDate = parsedDate.toISOString().split('T')[0];
+            }
+          }
+        } catch (e) {
+          isoDate = '';
+        }
+
+        // Clean price: remove commas, non-digit characters
+        const rawPrice = String(record.modal_price || record.min_price || record.price || '').replace(/[^0-9.-]/g, '');
+        const price = Number.isFinite(Number(rawPrice)) ? Math.round(Number(rawPrice)) : 0;
+
+        return {
+          crop: record.commodity || input.crop,
+          price,
+          location: `${record.market || record.center || ''}${record.state ? ', ' + record.state : ''}`.trim(),
+          // fallback to isoDate, else today's date so UI doesn't show old static date
+          date: isoDate || new Date().toISOString().split('T')[0],
+          __rawDate: rawDate,
+        } as any;
+      });
+
+      // Sort by parsed date descending (newest first)
+      parsed.sort((a: any, b: any) => {
+        const ta = new Date(a.date).getTime();
+        const tb = new Date(b.date).getTime();
+        return tb - ta;
+      });
+
+      // Remove internal helper fields before returning
+      const prices = parsed.map(({__rawDate, ...rest}: any) => rest);
+
+      return prices;
 
         } catch (error) {
             console.error("Failed to fetch market prices:", error);
